@@ -16,22 +16,8 @@ export const home: (args: HomeArgs) => RequiredDataFromCollectionSlug<'pages'> =
     hero: {
       type: 'highImpact',
       links: [
-        {
-          link: {
-            type: 'custom',
-            appearance: 'default',
-            label: 'All posts',
-            url: '/posts',
-          },
-        },
-        {
-          link: {
-            type: 'custom',
-            appearance: 'outline',
-            label: 'Contact',
-            url: '/contact',
-          },
-        },
+        { label: 'All posts', url: '/posts', newTab: false },
+        { label: 'Contact', url: '/contact', newTab: false },
       ],
       media: heroImage.id,
       richText: {
