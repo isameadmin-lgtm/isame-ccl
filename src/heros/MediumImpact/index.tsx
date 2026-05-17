@@ -1,22 +1,33 @@
 import React from 'react'
 import Image from 'next/image'
-import type { Page } from '@/payload-types'
-import { CMSLink } from '@/components/Link'
+import Link from 'next/link'
 import RichText from '@/components/RichText'
 import { optimizedCloudinaryUrl } from '@/utilities/optimizedCloudinaryUrl'
 
-export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richText }) => {
+export const MediumImpactHero: React.FC<any> = (props) => {
+  const { media, richText } = props
+  const links = props?.links ?? []
+
   // Safely extract image URL and alt from the media object
   let imgUrl = ''
   let imgAlt = ''
   if (media && typeof media === 'object' && 'url' in media) {
     imgUrl = (media as any).url || ''
     imgAlt = (media as any).alt || ''
-  } else if (typeof media === 'string') {
-    imgUrl = ''
   }
 
   const optimizedSrc = imgUrl ? optimizedCloudinaryUrl(imgUrl) : ''
+
+  // Helper to get label, href, newTab from either flat or nested link format
+  const getLinkLabel = (item: any) => item?.label || item?.link?.label || ''
+  const getLinkHref = (item: any) => {
+    if (item?.url) return item.url
+    if (item?.link?.url) return item.link.url
+    if (item?.link?.type === 'reference' && item.link.reference?.slug)
+      return `/${item.link.reference.slug}`
+    return '#'
+  }
+  const getLinkNewTab = (item: any) => item?.newTab ?? item?.link?.newTab ?? false
 
   return (
     <div className="">
@@ -25,9 +36,16 @@ export const MediumImpactHero: React.FC<Page['hero']> = ({ links, media, richTex
 
         {Array.isArray(links) && links.length > 0 && (
           <ul className="flex gap-4">
-            {links.map(({ link }, i) => (
+            {links.map((item: any, i: number) => (
               <li key={i}>
-                <CMSLink {...link} />
+                <Link
+                  href={getLinkHref(item)}
+                  target={getLinkNewTab(item) ? '_blank' : undefined}
+                  className="inline-block rounded-lg px-8 py-4 text-lg transition-all hover:shadow-lg"
+                  style={{ backgroundColor: 'var(--color-primary)', color: '#1A1A1A' }}
+                >
+                  {getLinkLabel(item)}
+                </Link>
               </li>
             ))}
           </ul>

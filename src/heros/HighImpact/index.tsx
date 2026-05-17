@@ -2,13 +2,17 @@
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import React, { useEffect } from 'react'
 import Image from 'next/image'
+import Link from 'next/link'
 import type { Page } from '@/payload-types'
-import { CMSLink } from '@/components/Link'
 import RichText from '@/components/RichText'
 import { optimizedCloudinaryUrl } from '@/utilities/optimizedCloudinaryUrl'
 
-export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText }) => {
+export const HighImpactHero: React.FC<Page['hero']> = (props) => {
   const { setHeaderTheme } = useHeaderTheme()
+  const { media, richText } = props as any
+
+  // links can be absent or in either format
+  const links = (props as any)?.links ?? []
 
   useEffect(() => {
     setHeaderTheme('dark')
@@ -20,12 +24,20 @@ export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText 
   if (media && typeof media === 'object' && 'url' in media) {
     imgUrl = (media as any).url || ''
     imgAlt = (media as any).alt || ''
-  } else if (typeof media === 'string') {
-    // In rare cases media might be a string ID (not resolved), skip
-    imgUrl = ''
   }
 
   const optimizedSrc = imgUrl ? optimizedCloudinaryUrl(imgUrl) : ''
+
+  // Helper to get label, href, newTab from either flat or nested format
+  const getLinkLabel = (item: any) => item?.label || item?.link?.label || ''
+  const getLinkHref = (item: any) => {
+    if (item?.url) return item.url
+    if (item?.link?.url) return item.link.url
+    if (item?.link?.type === 'reference' && item.link.reference?.slug)
+      return `/${item.link.reference.slug}`
+    return '#'
+  }
+  const getLinkNewTab = (item: any) => item?.newTab ?? item?.link?.newTab ?? false
 
   return (
     <div
@@ -46,7 +58,7 @@ export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText 
             />
           )}
         </div>
-        {/* Optional: dark overlay for better text contrast */}
+        {/* dark overlay for better text contrast */}
         <div className="absolute inset-0 bg-black/40" />
       </div>
 
@@ -56,9 +68,16 @@ export const HighImpactHero: React.FC<Page['hero']> = ({ links, media, richText 
           {richText && <RichText className="mb-6" data={richText} enableGutter={false} />}
           {Array.isArray(links) && links.length > 0 && (
             <ul className="flex justify-center gap-4">
-              {links.map(({ link }, i) => (
+              {links.map((item: any, i: number) => (
                 <li key={i}>
-                  <CMSLink {...link} />
+                  <Link
+                    href={getLinkHref(item)}
+                    target={getLinkNewTab(item) ? '_blank' : undefined}
+                    className="inline-block rounded-lg px-8 py-4 text-lg transition-all hover:shadow-lg"
+                    style={{ backgroundColor: 'var(--color-primary)', color: '#1A1A1A' }}
+                  >
+                    {getLinkLabel(item)}
+                  </Link>
                 </li>
               ))}
             </ul>
