@@ -8,6 +8,16 @@ export const Header: GlobalConfig = {
   },
   fields: [
     {
+      name: 'headerStyle',
+      type: 'select',
+      label: 'Header Style',
+      defaultValue: 'overlay',
+      options: [
+        { label: 'Overlay (on top of hero)', value: 'overlay' },
+        { label: 'Relative (above hero)', value: 'relative' },
+      ],
+    },
+    {
       name: 'navItems',
       type: 'array',
       fields: [
@@ -15,7 +25,7 @@ export const Header: GlobalConfig = {
           name: 'label',
           type: 'text',
           required: true,
-          localized: true, // ✅ label is translatable
+          localized: true,
           label: 'Link Label',
         },
         {

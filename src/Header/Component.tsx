@@ -11,15 +11,13 @@ import { setLocaleCookie } from '@/actions/locale'
 
 type HeaderProps = {
   settings?: any
-  header?: any // 👈 added header prop
+  header?: any
 }
 
 // ----- robust href & label resolvers (unchanged) -----
 const getLinkHref = (linkItem: any): string => {
   if (!linkItem) return '#'
-  // Direct URL (your Header global)
   if (linkItem.url) return linkItem.url
-  // Old nested formats
   if (typeof linkItem === 'string') return linkItem
   if (linkItem.link && typeof linkItem.link === 'string') return linkItem.link
   if (linkItem.type === 'reference' && linkItem.reference?.value?.slug)
@@ -32,7 +30,6 @@ const getLinkHref = (linkItem: any): string => {
 
 const getLinkLabel = (linkItem: any): string => {
   if (!linkItem) return 'Link'
-  // Direct label (your Header global)
   if (linkItem.label) return linkItem.label
   if (typeof linkItem === 'string') return linkItem
   if (linkItem.link && typeof linkItem.link === 'string') return linkItem.link
@@ -51,11 +48,9 @@ const useInlineSvg = (url: string | undefined) => {
         return res.text()
       })
       .then((text) => {
-        // Remove hardcoded width/height from the root <svg> tag
         const cleaned = text
           .replace(/<svg([^>]*?)width="[^"]*"/, '<svg$1')
           .replace(/<svg([^>]*?)height="[^"]*"/, '<svg$1')
-        // Ensure a viewBox exists (fallback to 0 0 100 100 if missing)
         if (!/<svg[^>]*?viewBox="/i.test(cleaned)) {
           return cleaned.replace(/<svg/, '<svg viewBox="0 0 500 500"')
         }
@@ -77,13 +72,11 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
 
   const branding = settings?.branding || {}
   const colors = settings?.colors || {}
-  // 👇 Use header.navItems for navigation; fallback to settings.navItems just in case
   const navItems = header?.navItems || settings?.navItems || []
   const cta = settings?.ctaButton
   const phoneNumber = settings?.phoneNumber
-  console.log('🚦 header prop:', header)
-  console.log('🚦 navItems used:', navItems)
-  // Extract global colors from settings
+  const headerStyle = header?.headerStyle || 'overlay' // 👈 new
+
   const primaryColor = colors.primaryColor || '#FFD700'
   const secondaryColor = colors.secondaryColor || '#E6B800'
   const bodyBgColor = colors.bodyBgColor || '#0a0a0a'
@@ -106,8 +99,6 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
   const logoDarkMedia = branding?.logoDark
   const logoSrc = isScrolled ? logoDarkMedia?.url || logoMedia?.url : logoMedia?.url
   const isSvg = logoMedia?.mimeType === 'image/svg+xml' || logoMedia?.format === 'svg'
-
-  // Fetch the actual SVG content if it's an SVG
   const { svgContent } = useInlineSvg(isSvg ? logoSrc : undefined)
 
   const opacity = branding?.headerOverlayOpacity ?? 0.9
@@ -134,24 +125,21 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
   const toggleMobileParent = (index: number) =>
     setOpenMobileParent(openMobileParent === index ? null : index)
 
-  // ---- Smooth locale switching (server action + transition) ----
   const { locale, setLocale } = useLocale()
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
 
   const changeLocale = (nextLocale: 'en' | 'es') => {
     startTransition(async () => {
-      setLocale(nextLocale) // update React context
-      await setLocaleCookie(nextLocale) // set cookie on the server
-      router.refresh() // soft reload – instant feedback
+      setLocale(nextLocale)
+      await setLocaleCookie(nextLocale)
+      router.refresh()
     })
   }
 
-  // Updated logo render function — no forced aspect ratio
   const renderLogo = () => {
     if (!logoMedia) return null
 
-    // Inline SVG – responsive, never cropped
     if (isSvg && svgContent) {
       return (
         <div
@@ -162,7 +150,6 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
       )
     }
 
-    // Raster images (png, jpg, etc.)
     if (!isSvg && logoSrc) {
       const imgHeight =
         logoNaturalHeight && logoNaturalWidth
@@ -188,23 +175,31 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
     <>
       <header
         className={`
-          sticky top-0 md:fixed md:top-0 md:left-0 md:right-0
           w-full z-50 transition-all duration-500
           ${
+            headerStyle === 'overlay'
+              ? 'sticky top-0 md:fixed md:top-0 md:left-0 md:right-0'
+              : 'sticky top-0'
+          }
+          ${
             isScrolled
-              ? 'bg-black/80 shadow-sm border-b border-[var(--color-primary)]' // solid sticky state
-              : 'bg-black/50 backdrop-blur-xl' // frosted glass
+              ? 'bg-black/80 shadow-sm border-b border-[var(--color-primary)]'
+              : headerStyle === 'overlay'
+                ? 'bg-black/50 backdrop-blur-xl'
+                : 'bg-transparent'
           }
         `}
       >
-        {/* Gradient that goes from dark at the top to transparent at the bottom */}
-        <div
-          className="absolute inset-0 transition-opacity duration-500"
-          style={{
-            backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 80%)`,
-            opacity: isScrolled ? 0 : 1,
-          }}
-        />
+        {/* Gradient overlay: only when headerStyle is "overlay" */}
+        {headerStyle === 'overlay' && (
+          <div
+            className="absolute inset-0 transition-opacity duration-500"
+            style={{
+              backgroundImage: gradient,
+              opacity: isScrolled ? 0 : 1,
+            }}
+          />
+        )}
 
         <div className="flex justify-center relative z-10">
           <div
@@ -212,7 +207,6 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
           >
             <div className="flex items-center justify-between gap-2 md:gap-4 lg:gap-8">
               <div className="flex items-center gap-2 md:gap-4 lg:gap-6 shrink-0">
-                {/* Logo link with responsive width – no aspect ratio box */}
                 <Link href="/" className="shrink-0">
                   <div
                     className="hidden md:block"
@@ -308,7 +302,6 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
                   </div>
                 )}
 
-                {/* 🌐 Desktop Language Toggle (with spinner) */}
                 <button
                   onClick={() => changeLocale(locale === 'en' ? 'es' : 'en')}
                   disabled={isPending}
@@ -337,7 +330,6 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
                   <span>{locale === 'en' ? 'ES' : 'EN'}</span>
                 </button>
 
-                {/* 🌐 Mobile Language Toggle (with spinner) – moved slightly down and closer to hamburger */}
                 <button
                   onClick={() => changeLocale(locale === 'en' ? 'es' : 'en')}
                   disabled={isPending}
@@ -367,7 +359,6 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
                   <span>{locale === 'en' ? 'ES' : 'EN'}</span>
                 </button>
 
-                {/* Mobile Hamburger Button */}
                 <div className="lg:hidden">
                   <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="text-white">
                     <div className="w-6 h-5 flex flex-col justify-between">
@@ -396,7 +387,7 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
         </div>
       </header>
 
-      {/* Mobile Drawer (toggle removed) */}
+      {/* Mobile Drawer (unchanged) */}
       <div
         className={`fixed inset-0 z-50 transition-transform duration-500 lg:hidden ${
           isMenuOpen ? 'translate-x-0' : 'translate-x-full'
@@ -476,7 +467,6 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
               )
             })}
 
-            {/* CTA Button in Mobile Drawer */}
             {cta?.ctaLink && (
               <Link
                 href={getLinkHref(cta.ctaLink)}
@@ -505,4 +495,5 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
     </>
   )
 }
+
 export default Header
