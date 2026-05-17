@@ -17,6 +17,9 @@ type HeaderProps = {
 // ----- robust href & label resolvers (unchanged) -----
 const getLinkHref = (linkItem: any): string => {
   if (!linkItem) return '#'
+  // Direct URL (your Header global)
+  if (linkItem.url) return linkItem.url
+  // Old nested formats
   if (typeof linkItem === 'string') return linkItem
   if (linkItem.link && typeof linkItem.link === 'string') return linkItem.link
   if (linkItem.type === 'reference' && linkItem.reference?.value?.slug)
@@ -29,8 +32,9 @@ const getLinkHref = (linkItem: any): string => {
 
 const getLinkLabel = (linkItem: any): string => {
   if (!linkItem) return 'Link'
-  if (typeof linkItem === 'string') return linkItem
+  // Direct label (your Header global)
   if (linkItem.label) return linkItem.label
+  if (typeof linkItem === 'string') return linkItem
   if (linkItem.link && typeof linkItem.link === 'string') return linkItem.link
   return 'Link'
 }

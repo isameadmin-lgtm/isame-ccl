@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { cloudinaryStorage } from 'payload-storage-cloudinary'
 import { v2 as cloudinary } from 'cloudinary'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer' // 👈 official adapter
 
 import {
   TextColorFeature,
@@ -34,7 +35,7 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY!,
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 })
-
+console.log('📧 SMTP_HOST:', process.env.SMTP_HOST)
 // SVG‑safe URL builder – never transform SVGs
 const getStorageURL = ({ public_id, version, resource_type, format }: any) => {
   const isSVG = (typeof public_id === 'string' && public_id.endsWith('.svg')) || format === 'svg'
@@ -62,6 +63,20 @@ export default buildConfig({
     defaultLocale: 'en',
     fallback: true,
   },
+
+  // ✅ Email configuration – enables password resets and other system emails
+  email: nodemailerAdapter({
+    defaultFromAddress: 'info@isame.bz',
+    defaultFromName: 'Isame Collection',
+    transportOptions: {
+      host: process.env.SMTP_HOST,
+      port: Number(process.env.SMTP_PORT),
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      },
+    },
+  }),
 
   admin: {
     components: {
@@ -116,35 +131,24 @@ export default buildConfig({
 
   plugins: [
     ...plugins,
-    // Inside plugins array
     cloudinaryStorage({
       cloudConfig: {
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
         api_key: process.env.CLOUDINARY_API_KEY!,
         api_secret: process.env.CLOUDINARY_API_SECRET!,
       },
+
       collections: {
         media: {
-          // All properties go directly on the media object – no nested "options"
           folder: 'media',
-          resourceType: 'image', // forces SVG as image, never raw
+          resourceType: 'image',
           public_id: ({ originalname }: { originalname: string }) => {
-            return `media/${originalname}` // keeps filename.svg extension
+            return `media/${originalname}`
           },
-          transformation: [], // no upload‑time transforms
+          transformation: [],
           deleteFromCloudinary: true,
-
-          getStorageURL: ({ public_id, version, resource_type, format }: any) => {
-            const isSVG =
-              (typeof public_id === 'string' && public_id.endsWith('.svg')) || format === 'svg'
-            return cloudinary.url(public_id, {
-              secure: true,
-              resource_type: 'image',
-              version,
-              transformation: isSVG ? [] : [{ quality: 'auto', fetch_format: 'auto' }],
-            })
-          },
-        } as any, // ← cast to any to skip missing type definitions
+          getStorageURL,
+        } as any,
       },
     }),
   ],
