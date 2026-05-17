@@ -20,6 +20,28 @@ export const THEME_PRESETS = {
       radius: '0.375rem',
     },
   },
+  // Add this object right after the 'isame' preset
+  light: {
+    label: 'Isame Light',
+    colors: {
+      primary: '#D4AF37', // gold – same as before
+      secondary: '#A7A9AC', // silver – same as before
+      accent: '#C9A632', // slightly darker gold, better contrast on white
+      background: '#FFFFFF', // white background
+      surface: '#F9F9F9', // off‑white for cards
+      text: '#1A1A1A', // dark text – the critical change
+      muted: '#4B5563', // readable grey for secondary text
+      border: '#D1D5DB', // light grey border
+      link: '#D4AF37', // gold links
+    },
+    typography: {
+      headingFont: 'Playfair Display',
+      bodyFont: 'Inter',
+    },
+    buttons: {
+      radius: '0.375rem',
+    },
+  },
   luxury: {
     label: 'Luxury Tropical',
     colors: {

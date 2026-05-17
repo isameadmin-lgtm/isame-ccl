@@ -15,6 +15,7 @@ export const Settings: GlobalConfig = {
       defaultValue: 'isame',
       options: [
         { label: 'Isame Collection', value: 'isame' },
+        { label: 'Isame Light', value: 'light' }, // ← add this
         { label: 'Luxury Tropical', value: 'luxury' },
         { label: 'Elegant Resort', value: 'elegant' },
         { label: 'Modern Minimal', value: 'minimal' },
