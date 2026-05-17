@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
-import { isAdmin } from '../../access/isAdmin' // we'll create this helper
+import { isAdmin } from '../../access/isAdmin'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -17,11 +17,11 @@ export const Users: CollectionConfig = {
     useAsTitle: 'name',
   },
   auth: {
-    tokenExpiration: 7200, // 2 hours
+    tokenExpiration: 7200, // 2 hours – you can increase this if you want longer sessions
+    // ✅ Netlify‑safe cookie settings
     cookies: {
-      sameSite: 'None',
-      secure: true,
-      //domain: process.env.NODE_ENV === 'production' ? '.vercel.app' : undefined,
+      sameSite: 'Lax', // works on all Netlify domains
+      secure: true, // HTTPS is always on Netlify
     },
   },
   fields: [
@@ -36,11 +36,10 @@ export const Users: CollectionConfig = {
       options: [
         { label: 'Admin', value: 'admin' },
         { label: 'Editor', value: 'editor' },
-        // Add other roles as needed
       ],
       defaultValue: [],
       access: {
-        // Only admins can update roles
+        // Only admins can update roles – your user already has 'admin', so this is fine
         update: ({ req: { user } }) => user?.roles?.includes('admin') ?? false,
         create: ({ req: { user } }) => user?.roles?.includes('admin') ?? false,
       },
