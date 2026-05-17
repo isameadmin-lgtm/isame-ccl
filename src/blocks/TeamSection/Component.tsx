@@ -2,23 +2,23 @@
 
 import React from 'react'
 import Image from 'next/image'
-import { motion } from 'framer-motion'
-import AnimateOnScroll from '../../components/AnimateOnScroll' // ✅ relative import
-import RichText from '@/components/RichText' // your existing RichText renderer
+import AnimateOnScroll from '../../components/AnimateOnScroll'
+import RichText from '@/components/RichText'
 
 type TeamSectionProps = {
-  backgroundColor?: string
+  backgroundColor?: string | null
   contentWidth?: 'contained' | 'full'
   image?: { url?: string; alt?: string } | string | null
-  overlayGradientStart?: string
-  overlayGradientEnd?: string
-  overlayOpacity?: number
-  heading?: string
-  headingColor?: string
-  content?: any // rich text JSON
-  quoteText?: string
-  quoteBorderColor?: string
-  enableAnimation?: boolean
+  overlayGradientStart?: string | null
+  overlayGradientEnd?: string | null
+  overlayOpacity?: number | null
+  heading?: string | null
+  headingColor?: string | null
+  content?: any
+  quoteText?: string | null
+  quoteBorderColor?: string | null
+  quoteTextColor?: string | null // 👈 new prop
+  enableAnimation?: boolean | null
   id?: string | null
 }
 
@@ -34,9 +34,9 @@ export const TeamSectionBlockComponent: React.FC<TeamSectionProps> = ({
   content,
   quoteText,
   quoteBorderColor,
+  quoteTextColor, // 👈 destructure
   enableAnimation = true,
 }) => {
-  // Resolve image URL from media object or string
   const imgUrl =
     typeof image === 'object' && image !== null && 'url' in image
       ? image.url
@@ -54,12 +54,7 @@ export const TeamSectionBlockComponent: React.FC<TeamSectionProps> = ({
     )
 
   return (
-    <section
-      className="py-20"
-      style={{
-        backgroundColor: backgroundColor || 'var(--bg-body)',
-      }}
-    >
+    <section className="py-20" style={{ backgroundColor: backgroundColor || 'var(--bg-body)' }}>
       <div
         className={
           contentWidth === 'contained'
@@ -81,7 +76,6 @@ export const TeamSectionBlockComponent: React.FC<TeamSectionProps> = ({
                     className="w-full h-[500px] object-cover"
                     unoptimized
                   />
-                  {/* Gradient overlay */}
                   <div
                     className="absolute inset-0"
                     style={{
@@ -128,7 +122,10 @@ export const TeamSectionBlockComponent: React.FC<TeamSectionProps> = ({
                     border: `2px solid ${quoteBorderColor || 'var(--color-primary)'}`,
                   }}
                 >
-                  <p className="text-lg italic" style={{ color: 'var(--color-text)' }}>
+                  <p
+                    className="text-lg italic"
+                    style={{ color: quoteTextColor || 'var(--color-text)' }}
+                  >
                     {quoteText}
                   </p>
                 </div>

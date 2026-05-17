@@ -119,6 +119,15 @@ export const TeamSectionBlock: Block = {
             components: { Field: '@/components/ThemeColorPicker#default' },
           },
         },
+        {
+          name: 'quoteTextColor',
+          type: 'text',
+          label: 'Quote Text Color',
+          admin: {
+            components: { Field: '@/components/ThemeColorPicker#default' },
+            description: 'Leave empty for the theme text colour.',
+          },
+        },
       ],
     },
     // ---------- ANIMATION ----------
