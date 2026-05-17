@@ -20,7 +20,7 @@ export const Users: CollectionConfig = {
     tokenExpiration: 7200, // 2 hours – you can increase this if you want longer sessions
     // ✅ Netlify‑safe cookie settings
     cookies: {
-      sameSite: 'Lax', // works on all Netlify domains
+      sameSite: 'None', // works on all Netlify domains
       secure: true, // HTTPS is always on Netlify
     },
   },
