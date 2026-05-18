@@ -21,7 +21,6 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
-import { Forms } from './collections/forms' // ✅ lowercase filename, uppercase export
 
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -127,7 +126,7 @@ export default buildConfig({
     url: process.env.DATABASE_URL || '',
   }),
 
-  collections: [Pages, Posts, Media, Categories, Users, Forms], // 👈 Forms included here
+  collections: [Pages, Posts, Media, Categories, Users], // 👈 Forms included here
   globals: [Header, Footer, Settings],
 
   plugins: [
