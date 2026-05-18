@@ -21,9 +21,11 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
+import { Forms } from './collections/forms' // ✅ lowercase filename, uppercase export
+
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
-import { plugins } from './plugins' // ← uses your existing plugins (including form‑builder)
+import { plugins } from './plugins'
 import { getServerSideURL } from './utilities/getURL'
 import { Settings } from './globals/Settings'
 
@@ -125,11 +127,11 @@ export default buildConfig({
     url: process.env.DATABASE_URL || '',
   }),
 
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, Users, Forms], // 👈 Forms included here
   globals: [Header, Footer, Settings],
 
   plugins: [
-    ...plugins, // ← all your existing plugins (form builder is here)
+    ...plugins,
     cloudinaryStorage({
       cloudConfig: {
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
