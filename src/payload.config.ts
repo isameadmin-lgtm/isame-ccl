@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { cloudinaryStorage } from 'payload-storage-cloudinary'
 import { v2 as cloudinary } from 'cloudinary'
-import { nodemailerAdapter } from '@payloadcms/email-nodemailer' // 👈 official adapter
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 
 import {
   TextColorFeature,
@@ -23,7 +23,7 @@ import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
-import { plugins } from './plugins'
+import { plugins } from './plugins' // ← uses your existing plugins (including form‑builder)
 import { getServerSideURL } from './utilities/getURL'
 import { Settings } from './globals/Settings'
 
@@ -35,11 +35,11 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY!,
   api_secret: process.env.CLOUDINARY_API_SECRET!,
 })
+
 console.log('📧 SMTP_HOST:', process.env.SMTP_HOST)
-// SVG‑safe URL builder – never transform SVGs
+
 const getStorageURL = ({ public_id, version, resource_type, format }: any) => {
   const isSVG = (typeof public_id === 'string' && public_id.endsWith('.svg')) || format === 'svg'
-
   return cloudinary.url(public_id, {
     secure: true,
     resource_type: 'image',
@@ -64,7 +64,6 @@ export default buildConfig({
     fallback: true,
   },
 
-  // ✅ Email configuration – enables password resets and other system emails
   email: nodemailerAdapter({
     defaultFromAddress: 'info@isame.bz',
     defaultFromName: 'Isame Collection',
@@ -130,14 +129,13 @@ export default buildConfig({
   globals: [Header, Footer, Settings],
 
   plugins: [
-    ...plugins,
+    ...plugins, // ← all your existing plugins (form builder is here)
     cloudinaryStorage({
       cloudConfig: {
         cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
         api_key: process.env.CLOUDINARY_API_KEY!,
         api_secret: process.env.CLOUDINARY_API_SECRET!,
       },
-
       collections: {
         media: {
           folder: 'media',
