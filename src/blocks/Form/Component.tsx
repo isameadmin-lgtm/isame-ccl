@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation'
 import React, { useCallback, useState } from 'react'
 import { useForm, FormProvider } from 'react-hook-form'
 import RichText from '@/components/RichText'
-import { Button } from '@/components/ui/button'
 import type { DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 
 import { fields } from './fields'
@@ -23,7 +22,6 @@ export const FormBlock: React.FC<
   {
     id?: string
     settings?: {
-      // ← NEW: theme settings from the page
       primaryColor?: string
       secondaryColor?: string
       linkColor?: string
@@ -35,10 +33,9 @@ export const FormBlock: React.FC<
     form: formFromProps,
     form: { id: formID, confirmationMessage, confirmationType, redirect, submitButtonLabel } = {},
     introContent,
-    settings, // ← destructure the new prop
+    settings,
   } = props
 
-  // Resolve theme colors with fallbacks (keep existing defaults where needed)
   const primary = settings?.primaryColor || '#D4AF37'
   const secondary = settings?.secondaryColor || '#A7A9AC'
   const link = settings?.linkColor || primary
@@ -130,8 +127,9 @@ export const FormBlock: React.FC<
       <div
         className="p-4 lg:p-6 rounded-[0.8rem]"
         style={{
-          borderColor: secondary, // ← theme border color (replaces Tailwind 'border-border')
+          borderColor: secondary,
           borderWidth: '1px',
+          color: 'var(--color-text)', // ← makes labels, descriptions, etc. use theme text colour
         }}
       >
         <FormProvider {...formMethods}>
@@ -167,13 +165,12 @@ export const FormBlock: React.FC<
                   })}
               </div>
 
-              {/* Submit Button – now dynamic */}
               <button
                 type="submit"
                 className="px-6 py-2 rounded-md font-medium transition-colors"
                 style={{
                   backgroundColor: primary,
-                  color: '#000000', // dark text for contrast on gold
+                  color: '#000000',
                   border: `1px solid ${primary}`,
                 }}
                 onMouseEnter={(e) => {

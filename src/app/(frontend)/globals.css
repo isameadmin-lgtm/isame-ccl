@@ -233,3 +233,27 @@ body {
     margin-bottom: 30px!important;
 }
 }
+/* Make selects follow the theme text colour */
+select,
+select option {
+  color: var(--color-text);
+  background-color: var(--color-surface, #1A1A1A);
+}
+
+/* Optional: style the select when focused */
+select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--color-text);
+  opacity: 0.6;
+}
+/* Replace the class below with the one you found */
+.form-field__select,
+.form-field__select option,
+.react-select__single-value,
+.react-select__option {
+  color: var(--color-text) !important;
+}
