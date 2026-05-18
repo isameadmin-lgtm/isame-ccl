@@ -1,11 +1,6 @@
 'use client'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
-import {
-  DefaultNodeTypes,
-  SerializedBlockNode,
-  SerializedLinkNode,
-  type DefaultTypedEditorState,
-} from '@payloadcms/richtext-lexical'
+import { SerializedLinkNode, type DefaultTypedEditorState } from '@payloadcms/richtext-lexical'
 import {
   JSXConvertersFunction,
   LinkJSXConverter,
@@ -17,7 +12,6 @@ import { CodeBlock, CodeBlockProps } from '@/blocks/Code/Component'
 import type { MediaBlock as MediaBlockProps } from '@/payload-types'
 import { cn } from '@/utilities/ui'
 
-// Define the shape of a serialized image node from your custom editor
 interface SerializedImageNode {
   type: 'image'
   src: string
@@ -29,11 +23,6 @@ interface SerializedImageNode {
   version: number
 }
 
-type NodeTypes =
-  | DefaultNodeTypes
-  | SerializedBlockNode<MediaBlockProps | CodeBlockProps>
-  | SerializedImageNode
-
 const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   const { value, relationTo } = linkNode.fields.doc!
   if (typeof value !== 'object') {
@@ -43,13 +32,13 @@ const internalDocToHref = ({ linkNode }: { linkNode: SerializedLinkNode }) => {
   return relationTo === 'posts' ? `/posts/${slug}` : `/${slug}`
 }
 
-const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) => ({
+const jsxConverters: JSXConvertersFunction = ({ defaultConverters }) => ({
   ...defaultConverters,
   ...LinkJSXConverter({ internalDocToHref }),
   ...TypographyJSXConverters,
 
-  // Custom text converter to preserve inline styles
-  text: ({ node }) => {
+  // Custom text converter with typed node
+  text: ({ node }: { node: { text: string; style?: string | Record<string, string> } }) => {
     const { text, style } = node
     if (style) {
       const styleObj: React.CSSProperties = {}
@@ -70,17 +59,19 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
   },
 
   blocks: {
-    mediaBlock: ({ node }) => (
+    mediaBlock: ({ node }: { node: { fields: MediaBlockProps } }) => (
       <MediaBlock
         className="col-start-1 col-span-3"
         imgClassName="m-0"
-        {...(node.fields as any)} // ✅ Silences TypeScript while preserving all data
+        {...(node.fields as any)}
         captionClassName="mx-auto max-w-[48rem]"
         enableGutter={false}
         disableInnerContainer
       />
     ),
-    code: ({ node }) => <CodeBlock className="col-start-2" {...node.fields} />,
+    code: ({ node }: { node: { fields: CodeBlockProps } }) => (
+      <CodeBlock className="col-start-2" {...node.fields} />
+    ),
     image: ({ node }: { node: SerializedImageNode }) => {
       const { src, altText, width } = node
       return (
@@ -97,6 +88,8 @@ const jsxConverters: JSXConvertersFunction<NodeTypes> = ({ defaultConverters }) 
     },
   },
 })
+
+// … rest of the file (Props, normalizeEditorState, default export) remains EXACTLY the same
 
 type Props = {
   data: any
