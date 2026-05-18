@@ -26,9 +26,13 @@ type ImageGridProps = {
   customDesktopHeight?: number
   buttonStyle?: 'gold' | 'white'
   className?: string
+  settings?: {
+    primaryColor?: string
+    secondaryColor?: string
+    linkColor?: string
+  }
 }
 
-// Increased min‑height for mobile (the first number in min‑h)
 const heightMap = {
   normal: 'min-h-[560px] sm:min-h-[500px] lg:h-[450px] lg:aspect-auto',
   tall: 'min-h-[620px] sm:min-h-[560px] lg:h-[550px] lg:aspect-auto',
@@ -41,12 +45,6 @@ const speedMap = {
   fast: 0.6,
 }
 
-const buttonClasses = {
-  gold: 'inline-block px-6 py-2 border border-white text-white text-sm uppercase tracking-wider transition-all duration-300 hover:bg-[#ffd28d] hover:text-black hover:border-[#ffd28d]',
-  white:
-    'inline-block px-6 py-2 border border-white text-white text-sm uppercase tracking-wider transition-all duration-300 hover:bg-white hover:text-black hover:border-white',
-}
-
 export const ImageGridBlock: React.FC<ImageGridProps> = ({
   heading,
   subheading,
@@ -57,6 +55,7 @@ export const ImageGridBlock: React.FC<ImageGridProps> = ({
   customDesktopHeight,
   buttonStyle = 'gold',
   className,
+  settings,
 }) => {
   const [activeIndex, setActiveIndex] = useState(0)
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
@@ -84,13 +83,18 @@ export const ImageGridBlock: React.FC<ImageGridProps> = ({
     transition: `opacity ${transitionDuration}s ease, transform ${transitionDuration}s ease`,
   }
 
+  // Resolve theme primary colour (fallback to original gold)
+  const primary = settings?.primaryColor || '#ffd28d'
+
   return (
     <section className={cn('relative w-full py-8 md:py-12', className)}>
       {/* Headings */}
       {(heading || subheading) && (
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 mb-6 text-center">
           {subheading && (
-            <p className="text-sm uppercase tracking-wider text-[#ffd28d] mb-2">{subheading}</p>
+            <p className="text-sm uppercase tracking-wider mb-2" style={{ color: primary }}>
+              {subheading}
+            </p>
           )}
           {heading && <h2 className="text-3xl md:text-4xl font-light">{heading}</h2>}
         </div>
@@ -132,7 +136,7 @@ export const ImageGridBlock: React.FC<ImageGridProps> = ({
         {/* Dark overlay */}
         <div className="absolute inset-0 bg-black/60 z-0" />
 
-        {/* Grid Columns – now with taller mobile heights */}
+        {/* Grid Columns */}
         <div
           className={cn(
             'relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
@@ -147,6 +151,14 @@ export const ImageGridBlock: React.FC<ImageGridProps> = ({
             const isFirstRowTablet = index < 2 && items.length > 2
             const isLastDesktop = (index + 1) % 4 === 0
             const isOddDesktop = (index + 1) % 4 !== 0
+
+            // Button classes with dynamic hover
+            const buttonBaseClass =
+              'inline-block px-6 py-2 border border-white text-white text-sm uppercase tracking-wider transition-all duration-300'
+            const buttonHoverStyle =
+              buttonStyle === 'gold'
+                ? { backgroundColor: primary, borderColor: primary, color: '#000000' }
+                : { backgroundColor: 'white', borderColor: 'white', color: '#000000' }
 
             return (
               <div
@@ -171,7 +183,6 @@ export const ImageGridBlock: React.FC<ImageGridProps> = ({
                   )}
                 />
 
-                {/* Content wrapper – now with a bit more padding on mobile */}
                 <div
                   className={cn(
                     'absolute inset-0 flex flex-col items-center justify-center text-center p-4 sm:p-6 transition-transform duration-300 ease-out z-20',
@@ -197,7 +208,24 @@ export const ImageGridBlock: React.FC<ImageGridProps> = ({
                         href={item.link}
                         target={item.newTab ? '_blank' : undefined}
                         rel={item.newTab ? 'noopener noreferrer' : undefined}
-                        className={buttonClasses[buttonStyle]}
+                        className={`${buttonBaseClass} group`}
+                        style={undefined} // We use onMouseEnter/Leave instead
+                        onMouseEnter={(e) => {
+                          if (buttonStyle === 'gold') {
+                            e.currentTarget.style.backgroundColor = primary
+                            e.currentTarget.style.borderColor = primary
+                            e.currentTarget.style.color = '#000000'
+                          } else {
+                            e.currentTarget.style.backgroundColor = 'white'
+                            e.currentTarget.style.borderColor = 'white'
+                            e.currentTarget.style.color = '#000000'
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent'
+                          e.currentTarget.style.borderColor = 'white'
+                          e.currentTarget.style.color = 'white'
+                        }}
                       >
                         {item.buttonLabel || 'Learn More'}
                       </Link>

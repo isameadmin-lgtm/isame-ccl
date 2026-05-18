@@ -3511,6 +3511,9 @@ export interface Setting {
     textColor?: string | null;
     linkColor?: string | null;
     bodyBgColor?: string | null;
+    surfaceColor?: string | null;
+    borderColor?: string | null;
+    mutedColor?: string | null;
   };
   /**
    * Used on pages that do not specify their own background image.
@@ -3694,6 +3697,9 @@ export interface SettingsSelect<T extends boolean = true> {
         textColor?: T;
         linkColor?: T;
         bodyBgColor?: T;
+        surfaceColor?: T;
+        borderColor?: T;
+        mutedColor?: T;
       };
   defaultBackgroundImage?: T;
   defaultOverlayColor?: T;

@@ -259,6 +259,46 @@ export const Settings: GlobalConfig = {
                 },
               ],
             },
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'surfaceColor',
+                  type: 'text',
+                  label: 'Surface Color',
+                  admin: {
+                    components: {
+                      Field: '@/components/ThemeColorPicker#default',
+                    },
+                  },
+                },
+                {
+                  name: 'borderColor',
+                  type: 'text',
+                  label: 'Border Color',
+                  admin: {
+                    components: {
+                      Field: '@/components/ThemeColorPicker#default',
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'mutedColor',
+                  type: 'text',
+                  label: 'Muted Text Color',
+                  admin: {
+                    components: {
+                      Field: '@/components/ThemeColorPicker#default',
+                    },
+                  },
+                },
+              ],
+            },
           ],
         },
       ],
