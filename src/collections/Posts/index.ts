@@ -35,9 +35,10 @@ export const Posts: CollectionConfig<'posts'> = {
     read: authenticatedOrPublished,
     update: authenticated,
   },
-  // This config controls what's populated by default when a post is referenced
-  // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
-  // Type safe if the collection slug generic is passed to `CollectionConfig` - `CollectionConfig<'posts'>
+  // Enable localization for the whole collection (EN/ES switcher)
+  // @ts-ignore
+  localization: true,
+
   defaultPopulate: {
     title: true,
     slug: true,
@@ -70,10 +71,12 @@ export const Posts: CollectionConfig<'posts'> = {
       name: 'title',
       type: 'text',
       required: true,
+      localized: true, // titles can be translated
     },
     {
       type: 'tabs',
       tabs: [
+        // ----- Content tab -----
         {
           fields: [
             {
@@ -84,6 +87,7 @@ export const Posts: CollectionConfig<'posts'> = {
             {
               name: 'content',
               type: 'richText',
+              localized: true, // the main body is translatable
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => {
                   return [
@@ -102,6 +106,8 @@ export const Posts: CollectionConfig<'posts'> = {
           ],
           label: 'Content',
         },
+
+        // ----- Meta tab (related posts, categories) -----
         {
           fields: [
             {
@@ -132,6 +138,8 @@ export const Posts: CollectionConfig<'posts'> = {
           ],
           label: 'Meta',
         },
+
+        // ----- SEO tab -----
         {
           name: 'meta',
           label: 'SEO',
@@ -147,16 +155,84 @@ export const Posts: CollectionConfig<'posts'> = {
             MetaImageField({
               relationTo: 'media',
             }),
-
             MetaDescriptionField({}),
             PreviewField({
-              // if the `generateUrl` function is configured
               hasGenerateFn: true,
-
-              // field paths to match the target field for data
               titlePath: 'meta.title',
               descriptionPath: 'meta.description',
             }),
+          ],
+        },
+
+        // ----- Call to Action tab (NEW) -----
+        {
+          label: 'Call to Action',
+          fields: [
+            {
+              name: 'cta',
+              type: 'group',
+              label: false,
+              fields: [
+                {
+                  name: 'enableCTA',
+                  type: 'checkbox',
+                  label: 'Show a CTA button at the end of this post',
+                  defaultValue: false,
+                },
+                {
+                  name: 'label',
+                  type: 'text',
+                  localized: true,
+                  label: 'Button Label',
+                  admin: {
+                    condition: (_, { enableCTA }) => Boolean(enableCTA),
+                  },
+                },
+                {
+                  name: 'linkType',
+                  type: 'radio',
+                  label: 'Link Type',
+                  options: [
+                    { label: 'Internal Page', value: 'internal' },
+                    { label: 'Custom URL', value: 'custom' },
+                  ],
+                  defaultValue: 'custom',
+                  admin: {
+                    condition: (_, { enableCTA }) => Boolean(enableCTA),
+                    layout: 'horizontal',
+                  },
+                },
+                {
+                  name: 'internalPage',
+                  type: 'relationship',
+                  relationTo: 'pages',
+                  label: 'Select a Page',
+                  admin: {
+                    condition: (_, { linkType, enableCTA }) =>
+                      Boolean(enableCTA) && linkType === 'internal',
+                  },
+                },
+                {
+                  name: 'customUrl',
+                  type: 'text',
+                  label: 'Custom URL',
+                  admin: {
+                    condition: (_, { linkType, enableCTA }) =>
+                      Boolean(enableCTA) && linkType === 'custom',
+                    placeholder: 'https://example.com',
+                  },
+                },
+                {
+                  name: 'newTab',
+                  type: 'checkbox',
+                  label: 'Open in new tab',
+                  defaultValue: false,
+                  admin: {
+                    condition: (_, { enableCTA }) => Boolean(enableCTA),
+                  },
+                },
+              ],
+            },
           ],
         },
       ],
@@ -190,9 +266,6 @@ export const Posts: CollectionConfig<'posts'> = {
       hasMany: true,
       relationTo: 'users',
     },
-    // This field is only used to populate the user data via the `populateAuthors` hook
-    // This is because the `user` collection has access control locked to protect user privacy
-    // GraphQL will also not return mutated user data that differs from the underlying schema
     {
       name: 'populatedAuthors',
       type: 'array',
@@ -224,7 +297,7 @@ export const Posts: CollectionConfig<'posts'> = {
   versions: {
     drafts: {
       autosave: {
-        interval: 100, // We set this interval for optimal live preview
+        interval: 100,
       },
       schedulePublish: true,
     },

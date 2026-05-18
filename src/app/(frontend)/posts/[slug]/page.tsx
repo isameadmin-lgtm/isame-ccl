@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link' // 👈 make sure this is imported
 import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
@@ -85,6 +86,18 @@ export default async function Post({ params: paramsPromise }: Args) {
     boxShadow: `1px 3px 9px 6px ${primaryColor}`,
   }
 
+  // ----- RESOLVE CTA LINK (NEW) -----
+  const cta = post.cta
+  let ctaHref = '#'
+  if (cta?.enableCTA) {
+    if (cta.linkType === 'internal' && cta.internalPage) {
+      const page = typeof cta.internalPage === 'object' ? cta.internalPage : null
+      ctaHref = page?.slug ? `/${page.slug}` : '#'
+    } else if (cta.linkType === 'custom' && cta.customUrl) {
+      ctaHref = cta.customUrl
+    }
+  }
+
   return (
     <article
       className="pt-16 pb-16"
@@ -107,9 +120,28 @@ export default async function Post({ params: paramsPromise }: Args) {
               className="max-w-[48rem] mx-auto p-[20px] mb-8 md:mb-0"
               data={post.content}
               enableGutter={false}
-              style={shadowStyle} // ← dynamic shadow
+              style={shadowStyle}
             />
           </div>
+
+          {/* ----- CALL TO ACTION BUTTON (NEW) ----- */}
+          {cta?.enableCTA && cta.label && ctaHref !== '#' && (
+            <div className="mt-12 text-center">
+              <Link
+                href={ctaHref}
+                target={cta.newTab ? '_blank' : undefined}
+                rel={cta.newTab ? 'noopener noreferrer' : undefined}
+                className="inline-block px-8 py-4 rounded-lg text-lg font-medium transition-all hover:shadow-lg"
+                style={{
+                  backgroundColor: primaryColor,
+                  color: '#000000',
+                }}
+              >
+                {cta.label}
+              </Link>
+            </div>
+          )}
+
           {post.relatedPosts && post.relatedPosts.length > 0 && (
             <RelatedPosts
               className="mt-12 max-w-[52rem] lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"

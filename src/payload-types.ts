@@ -1495,6 +1495,14 @@ export interface Post {
     image?: (string | null) | Media;
     description?: string | null;
   };
+  cta?: {
+    enableCTA?: boolean | null;
+    label?: string | null;
+    linkType?: ('internal' | 'custom') | null;
+    internalPage?: (string | null) | Page;
+    customUrl?: string | null;
+    newTab?: boolean | null;
+  };
   publishedAt?: string | null;
   authors?: (string | User)[] | null;
   populatedAuthors?:
@@ -3018,6 +3026,16 @@ export interface PostsSelect<T extends boolean = true> {
         title?: T;
         image?: T;
         description?: T;
+      };
+  cta?:
+    | T
+    | {
+        enableCTA?: T;
+        label?: T;
+        linkType?: T;
+        internalPage?: T;
+        customUrl?: T;
+        newTab?: T;
       };
   publishedAt?: T;
   authors?: T;
