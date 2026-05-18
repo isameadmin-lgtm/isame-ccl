@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useState, useRef, useTransition } from 'react'
 import { Phone, Globe } from 'lucide-react'
 import { useLocale } from '@/providers/Language'
 import { setLocaleCookie } from '@/actions/locale'
@@ -67,15 +67,17 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
   const { setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
+  const [shouldStick, setShouldStick] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [openMobileParent, setOpenMobileParent] = useState<number | null>(null)
+  const headerRef = useRef<HTMLElement>(null)
 
   const branding = settings?.branding || {}
   const colors = settings?.colors || {}
   const navItems = header?.navItems || settings?.navItems || []
   const cta = settings?.ctaButton
   const phoneNumber = settings?.phoneNumber
-  const headerStyle = header?.headerStyle || 'overlay' // 👈 new
+  const headerStyle = header?.headerStyle || 'overlay'
 
   const primaryColor = colors.primaryColor || '#FFD700'
   const secondaryColor = colors.secondaryColor || '#E6B800'
@@ -111,8 +113,21 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
   const desktopWidth = branding?.logoWidthDesktop ?? 180
   const mobileWidth = branding?.logoWidthMobile ?? 140
 
+  // Dynamic scroll handler - uses actual header height
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20)
+    const handleScroll = () => {
+      const scrollY = window.scrollY
+      setIsScrolled(scrollY > 20)
+
+      // Get actual header height dynamically
+      const headerHeight = headerRef.current?.offsetHeight || 100
+      // Header becomes sticky after scrolling past its own height
+      setShouldStick(scrollY > headerHeight)
+    }
+
+    // Run once on mount to set initial state
+    handleScroll()
+
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
@@ -174,13 +189,10 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
   return (
     <>
       <header
+        ref={headerRef}
         className={`
           w-full z-50 transition-all duration-500
-          ${
-            headerStyle === 'overlay'
-              ? 'sticky top-0 md:fixed md:top-0 md:left-0 md:right-0'
-              : 'sticky top-0'
-          }
+          ${shouldStick ? 'sticky top-0' : 'relative'}
           ${
             isScrolled
               ? 'bg-black/80 shadow-sm border-b border-[var(--color-primary)]'
@@ -190,8 +202,8 @@ export const Header: React.FC<HeaderProps> = ({ settings, header }) => {
           }
         `}
       >
-        {/* Gradient overlay: only when headerStyle is "overlay" */}
-        {headerStyle === 'overlay' && (
+        {/* Gradient overlay: only when headerStyle is "overlay" and not scrolled */}
+        {headerStyle === 'overlay' && !shouldStick && (
           <div
             className="absolute inset-0 transition-opacity duration-500"
             style={{
