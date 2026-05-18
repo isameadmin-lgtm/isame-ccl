@@ -3,13 +3,14 @@ import configPromise from '@payload-config'
 import { notFound } from 'next/navigation'
 import { cache } from 'react'
 import { unstable_cache } from 'next/cache'
-import { draftMode, cookies } from 'next/headers' // 👈 added cookies
+import { draftMode, cookies } from 'next/headers'
 import Image from 'next/image'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { optimizedCloudinaryUrl } from '@/utilities/optimizedCloudinaryUrl'
+import { THEME_PRESETS } from '@/theme/themePresets'
 import type { Metadata } from 'next'
 import type { Post } from '@/payload-types'
 
@@ -32,7 +33,6 @@ const getImageUrl = (media: any): string | null => {
   return null
 }
 
-// Updated locale helper – now async
 const getLocale = async (): Promise<'en' | 'es'> => {
   const cookieStore = await cookies()
   const localeCookie = cookieStore.get('locale')
@@ -50,7 +50,7 @@ const getPageData = cache(async (slug: string, draft = false, locale: 'en' | 'es
       limit: 1,
       depth: 1,
       draft,
-      locale, // 👈 locale passed to query
+      locale,
       select: {
         title: true,
         slug: true,
@@ -65,7 +65,7 @@ const getPageData = cache(async (slug: string, draft = false, locale: 'en' | 'es
         updatedAt: true,
       },
     }),
-    payload.findGlobal({ slug: 'settings', depth: 1, locale }), // 👈 locale for settings too
+    payload.findGlobal({ slug: 'settings', depth: 1, locale }),
   ])
 
   const page = pageResult.docs[0] || null
@@ -82,7 +82,7 @@ const getCachedPageData = (slug: string, locale: 'en' | 'es') =>
 export default async function Page({ params }: Args) {
   const { slug } = await params
   const decodedSlug = decodeURIComponent(slug)
-  const locale = await getLocale() // 👈 await the async helper
+  const locale = await getLocale()
 
   const { isEnabled: isDraftMode } = await draftMode()
 
@@ -113,7 +113,7 @@ export default async function Page({ params }: Args) {
               collection: 'posts',
               depth: 1,
               limit,
-              locale, // 👈 locale for posts
+              locale,
               ...(flattenedCategories.length
                 ? { where: { categories: { in: flattenedCategories } } }
                 : {}),
@@ -132,10 +132,22 @@ export default async function Page({ params }: Args) {
     )
   }
 
-  // ---------- PAGE DISPLAY ----------
-  const bodyBgColor = settings?.colors?.bodyBgColor || '#040d10'
-  const bodyFont = settings?.typography?.bodyFontFamily || 'Prompt, sans-serif'
+  // ---------- THEME PRESET FALLBACK ----------
+  const themePreset = settings?.themePreset || 'isame'
+  const preset = THEME_PRESETS[themePreset as keyof typeof THEME_PRESETS] ?? THEME_PRESETS.isame
 
+  const headingFont =
+    settings?.typography?.headingFontFamily ||
+    preset?.typography?.headingFont ||
+    'Playfair Display, serif'
+  const bodyFont =
+    settings?.typography?.bodyFontFamily || preset?.typography?.bodyFont || 'Inter, sans-serif'
+  const primaryColor = settings?.colors?.primaryColor || preset?.colors?.primary || '#D4AF37'
+  const secondaryColor = settings?.colors?.secondaryColor || preset?.colors?.secondary || '#A7A9AC'
+  const linkColor = settings?.colors?.linkColor || preset?.colors?.link || '#D4AF37'
+  const bodyBgColor = settings?.colors?.bodyBgColor || preset?.colors?.background || '#1A1A1A'
+
+  // ---------- PAGE DISPLAY ----------
   const overlayColor = page.overlayColor || '#0f3d2e'
   const overlayOpacity = page.overlayOpacity ?? 0.7
   const bgUrl = getImageUrl(page.backgroundImage)
@@ -171,11 +183,11 @@ export default async function Page({ params }: Args) {
             <RenderBlocks
               blocks={layout}
               settings={{
-                headingFontFamily: settings?.typography?.headingFontFamily,
-                bodyFontFamily: settings?.typography?.bodyFontFamily,
-                primaryColor: settings?.colors?.primaryColor,
-                secondaryColor: settings?.colors?.secondaryColor,
-                linkColor: settings?.colors?.linkColor,
+                headingFontFamily: headingFont,
+                bodyFontFamily: bodyFont,
+                primaryColor,
+                secondaryColor,
+                linkColor,
               }}
             />
           </div>

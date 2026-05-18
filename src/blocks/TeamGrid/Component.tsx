@@ -28,6 +28,12 @@ type TeamGridProps = {
   members?: TeamMember[] | null
   enableAnimation?: boolean | null
   id?: string | null
+  // Theme settings from parent page
+  settings?: {
+    primaryColor?: string
+    secondaryColor?: string
+    linkColor?: string
+  }
 }
 
 export const TeamGridBlockComponent: React.FC<TeamGridProps> = ({
@@ -38,8 +44,16 @@ export const TeamGridBlockComponent: React.FC<TeamGridProps> = ({
   subheadingColor,
   members,
   enableAnimation = true,
+  settings,
 }) => {
   if (!members || members.length === 0) return null
+
+  // Resolve theme colours (fallback to CSS variables)
+  const primary = settings?.primaryColor || 'var(--color-primary)'
+  const textColor = 'var(--color-text)'
+  const muted = 'var(--color-muted)'
+  const surface = 'var(--color-surface)'
+  const border = 'var(--color-border)'
 
   return (
     <section
@@ -55,14 +69,14 @@ export const TeamGridBlockComponent: React.FC<TeamGridProps> = ({
                 className="text-4xl md:text-5xl mb-4"
                 style={{
                   fontFamily: 'var(--font-heading)',
-                  color: headingColor || 'var(--color-primary)',
+                  color: headingColor || primary,
                 }}
               >
                 {heading}
               </h2>
             )}
             {subheading && (
-              <p className="text-xl" style={{ color: subheadingColor || 'var(--color-text)' }}>
+              <p className="text-xl" style={{ color: subheadingColor || textColor }}>
                 {subheading}
               </p>
             )}
@@ -83,8 +97,8 @@ export const TeamGridBlockComponent: React.FC<TeamGridProps> = ({
               <div
                 className="rounded-lg overflow-hidden shadow-lg border-2 hover:shadow-xl transition-shadow"
                 style={{
-                  backgroundColor: member.cardBackgroundColor || 'var(--color-surface)',
-                  borderColor: 'var(--color-border)',
+                  backgroundColor: member.cardBackgroundColor || surface,
+                  borderColor: border,
                 }}
               >
                 <div className="relative h-80 overflow-hidden">
@@ -100,7 +114,7 @@ export const TeamGridBlockComponent: React.FC<TeamGridProps> = ({
                     <div
                       className="w-full h-full"
                       style={{
-                        backgroundColor: member.placeholderColor || 'var(--color-muted)',
+                        backgroundColor: member.placeholderColor || muted,
                       }}
                     />
                   )}
@@ -118,20 +132,20 @@ export const TeamGridBlockComponent: React.FC<TeamGridProps> = ({
                     className="text-2xl mb-2"
                     style={{
                       fontFamily: 'var(--font-heading)',
-                      color: member.nameColor || 'var(--color-primary)',
+                      color: member.nameColor || primary,
                     }}
                   >
                     {member.name}
                   </h3>
                   {member.title && (
-                    <p className="mb-2" style={{ color: member.titleColor || 'var(--color-text)' }}>
+                    <p className="mb-2" style={{ color: member.titleColor || textColor }}>
                       {member.title}
                     </p>
                   )}
                   {member.languages && (
                     <div
                       className="flex items-center gap-2 text-sm"
-                      style={{ color: member.languagesColor || 'var(--color-muted)' }}
+                      style={{ color: member.languagesColor || muted }}
                     >
                       <Globe className="w-4 h-4" />
                       <span>{member.languages}</span>

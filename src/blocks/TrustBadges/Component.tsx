@@ -31,23 +31,30 @@ const ICON_MAP: Record<string, LucideIcon> = {
 
 type TrustBadgeProps = {
   backgroundColor?: string | null
-  textColor?: string | null // ← section‑wide
+  textColor?: string | null // section‑wide text colour
   badges?: {
     icon: string
     text: string
     iconColor?: string | null
-    textColor?: string | null // ← per‑badge override
+    textColor?: string | null // per‑badge override
     id?: string | null
   }[]
   columns?: string | null
   id?: string | null
+  // Theme settings from parent page
+  settings?: {
+    primaryColor?: string
+    secondaryColor?: string
+    linkColor?: string
+  }
 }
 
 export const TrustBadgesBlockComponent: React.FC<TrustBadgeProps> = ({
   backgroundColor,
-  textColor, // ← add this
+  textColor,
   badges,
   columns = '4',
+  settings,
 }) => {
   if (!badges || badges.length === 0) return null
 
@@ -62,6 +69,9 @@ export const TrustBadgesBlockComponent: React.FC<TrustBadgeProps> = ({
   ]
   const colClass = gridCols[Math.min(cols, 6) - 1] || 'grid-cols-4'
 
+  // Resolve theme primary colour (fallback to CSS variable)
+  const primary = settings?.primaryColor || 'var(--color-primary)'
+
   return (
     <div
       className="py-8"
@@ -71,10 +81,9 @@ export const TrustBadgesBlockComponent: React.FC<TrustBadgeProps> = ({
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className={`grid ${colClass} gap-6`}>
-          {/* Inside the badge map */}
           {badges.map((badge, idx) => {
             const IconComponent = ICON_MAP[badge.icon] || Star
-            const iconColor = badge.iconColor || 'var(--color-primary)'
+            const iconColor = badge.iconColor || primary
             const resolvedTextColor = badge.textColor || textColor || 'var(--color-text)'
 
             return (

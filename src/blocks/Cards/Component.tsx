@@ -23,6 +23,11 @@ type CardsProps = {
   verticalPadding?: 'sm' | 'md' | 'lg' | 'xl'
   width?: 'contained' | 'full'
   className?: string
+  settings?: {
+    primaryColor?: string
+    secondaryColor?: string
+    linkColor?: string
+  }
 }
 
 const paddingMap = {
@@ -45,11 +50,10 @@ const columnClasses = {
   4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
 }
 
-// Helper to generate sizes based on number of columns
 const getSizes = (columns: number): string => {
   if (columns === 2) return '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 50vw'
   if (columns === 4) return '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 25vw'
-  return '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw' // default 3 columns
+  return '(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw'
 }
 
 export const CardsBlock: React.FC<CardsProps> = ({
@@ -61,6 +65,7 @@ export const CardsBlock: React.FC<CardsProps> = ({
   verticalPadding = 'md',
   width = 'contained',
   className,
+  settings,
 }) => {
   const paddingClass = paddingMap[verticalPadding] || 'py-12'
   const columnsNum = typeof columns === 'string' ? parseInt(columns, 10) : columns || 3
@@ -70,6 +75,10 @@ export const CardsBlock: React.FC<CardsProps> = ({
     width === 'full' ? 'px-6 md:px-10 lg:px-16' : 'max-w-7xl mx-auto px-6 md:px-10 lg:px-16'
 
   const sizesValue = getSizes(columnsNum)
+
+  // Resolve theme colours (fallback to current hardcoded values)
+  const primary = settings?.primaryColor || '#D4AF37' // gold
+  const secondary = settings?.secondaryColor || '#A7A9AC' // silver
 
   return (
     <section className={cn('w-full', paddingClass, className)} style={{ backgroundColor }}>
@@ -102,17 +111,23 @@ export const CardsBlock: React.FC<CardsProps> = ({
                   )}
                 </div>
 
-                {/* Full overlay gradient (hero-button) – covers entire card */}
+                {/* Overlay gradient – now uses primary colour */}
                 <div
                   className="absolute inset-0 w-full h-full z-10"
                   style={{
-                    background: 'linear-gradient(80deg, #030b0d, rgba(3, 11, 13, 0))',
+                    background: `linear-gradient(80deg, ${primary}, rgba(3, 11, 13, 0))`,
                   }}
                 />
 
-                {/* Button overlay (top‑right) */}
+                {/* Button overlay (top‑right) – now dynamic */}
                 <div className="absolute top-4 right-4 z-20">
-                  <span className="inline-block bg-[#040d10] text-[#ffd28d] font-serif italic text-lg px-6 py-3 rounded-md">
+                  <span
+                    className="inline-block font-serif italic text-lg px-6 py-3 rounded-md"
+                    style={{
+                      backgroundColor: primary,
+                      color: '#000000',
+                    }}
+                  >
                     {item.buttonLabel || 'Read More'}
                   </span>
                 </div>

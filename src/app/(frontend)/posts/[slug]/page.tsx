@@ -3,7 +3,7 @@ import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
+import { draftMode, cookies } from 'next/headers'
 import React, { cache } from 'react'
 import RichText from '@/components/RichText'
 import type { Post } from '@/payload-types'
@@ -12,6 +12,7 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { Sidebar } from '@/components/Sidebar'
+import { THEME_PRESETS } from '@/theme/themePresets'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -28,6 +29,12 @@ export async function generateStaticParams() {
 
 type Args = { params: Promise<{ slug?: string }> }
 
+const getLocale = async (): Promise<'en' | 'es'> => {
+  const cookieStore = await cookies()
+  const localeCookie = cookieStore.get('locale')
+  return localeCookie?.value === 'es' ? 'es' : 'en'
+}
+
 export default async function Post({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
@@ -39,7 +46,6 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   const payload = await getPayload({ config: configPromise })
 
-  // Fetch sidebar data
   const { docs: categories } = await payload.find({
     collection: 'categories',
     depth: 1,
@@ -55,30 +61,53 @@ export default async function Post({ params: paramsPromise }: Args) {
     select: { title: true, slug: true, heroImage: true, publishedAt: true },
   })
 
-  const settings = await payload.findGlobal({ slug: 'settings' })
-  const primaryColor = settings?.colors?.primaryColor || '#FFD700'
-  const secondaryColor = settings?.colors?.secondaryColor || '#E6B800'
-  const linkColor = settings?.colors?.linkColor || secondaryColor
-  const bodyBgColor = settings?.colors?.bodyBgColor || '#040d10'
-  const headingFont = settings?.typography?.headingFontFamily || 'Baskervville, serif'
-  const bodyFont = settings?.typography?.bodyFontFamily || 'Prompt, sans-serif'
+  const locale = await getLocale()
+  const settings = await payload.findGlobal({ slug: 'settings', locale })
+
+  // ----- THEME PRESET INTEGRATION -----
+  const themePreset = settings?.themePreset || 'isame'
+  const preset = THEME_PRESETS[themePreset as keyof typeof THEME_PRESETS] ?? THEME_PRESETS.isame
+
+  const primaryColor = settings?.colors?.primaryColor || preset?.colors?.primary || '#D4AF37'
+  const secondaryColor = settings?.colors?.secondaryColor || preset?.colors?.secondary || '#A7A9AC'
+  const linkColor = settings?.colors?.linkColor || preset?.colors?.link || primaryColor
+  const bodyBgColor = settings?.colors?.bodyBgColor || preset?.colors?.background || '#1A1A1A'
+  const textColor = settings?.colors?.textColor || preset?.colors?.text || '#FFFFFF'
+  const headingFont =
+    settings?.typography?.headingFontFamily ||
+    preset?.typography?.headingFont ||
+    'Playfair Display, serif'
+  const bodyFont =
+    settings?.typography?.bodyFontFamily || preset?.typography?.bodyFont || 'Inter, sans-serif'
+
+  // Dynamic shadow using primary color
+  const shadowStyle = {
+    boxShadow: `1px 3px 9px 6px ${primaryColor}`,
+  }
 
   return (
-    <article className="pt-16 pb-16" style={{ backgroundColor: bodyBgColor, fontFamily: bodyFont }}>
+    <article
+      className="pt-16 pb-16"
+      style={{
+        backgroundColor: bodyBgColor,
+        fontFamily: bodyFont,
+        color: textColor,
+      }}
+    >
       <PageClient />
       <PayloadRedirects disableNotFound url={url} />
       {draft && <LivePreviewListener />}
 
-      {/* Hero image will display if post.heroImage exists */}
       <PostHero post={post} />
 
       <div className="flex flex-col items-center gap-4 pt-8">
         <div className="container">
           <div className="prose-wrapper">
             <RichText
-              className="max-w-[48rem] mx-auto shadow-[1px_3px_9px_6px_#f7d188] p-[20px] mb-8 md:mb-0"
+              className="max-w-[48rem] mx-auto p-[20px] mb-8 md:mb-0"
               data={post.content}
               enableGutter={false}
+              style={shadowStyle} // ← dynamic shadow
             />
           </div>
           {post.relatedPosts && post.relatedPosts.length > 0 && (
@@ -90,7 +119,7 @@ export default async function Post({ params: paramsPromise }: Args) {
         </div>
       </div>
 
-      {/* Sidebar - desktop: floating button, mobile: top dropdown */}
+      {/* Pass resolved theme colors to Sidebar */}
       <Sidebar
         categories={categories}
         recentPosts={recentPosts}
@@ -100,6 +129,7 @@ export default async function Post({ params: paramsPromise }: Args) {
         bodyBgColor={bodyBgColor}
         headingFont={headingFont}
         bodyFont={bodyFont}
+        textColor={textColor}
       />
     </article>
   )

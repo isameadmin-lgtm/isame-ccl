@@ -1004,6 +1004,10 @@ export interface Page {
         };
         quoteText?: string | null;
         quoteBorderColor?: string | null;
+        /**
+         * Leave empty for the theme text colour.
+         */
+        quoteTextColor?: string | null;
         enableAnimation?: boolean | null;
         id?: string | null;
         blockName?: string | null;
@@ -2644,6 +2648,7 @@ export interface PagesSelect<T extends boolean = true> {
               content?: T;
               quoteText?: T;
               quoteBorderColor?: T;
+              quoteTextColor?: T;
               enableAnimation?: T;
               id?: T;
               blockName?: T;
@@ -3368,6 +3373,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Header {
   id: string;
+  headerStyle?: ('overlay' | 'relative') | null;
   navItems?:
     | {
         label: string;
@@ -3474,7 +3480,7 @@ export interface Setting {
   /**
    * Sets default colours and fonts for the entire site. Each field below can still be overridden.
    */
-  themePreset?: ('isame' | 'luxury' | 'elegant' | 'minimal' | 'caribbean') | null;
+  themePreset?: ('isame' | 'light' | 'luxury' | 'elegant' | 'minimal' | 'caribbean') | null;
   branding: {
     logo: string | Media;
     /**
@@ -3502,6 +3508,7 @@ export interface Setting {
   colors?: {
     primaryColor?: string | null;
     secondaryColor?: string | null;
+    textColor?: string | null;
     linkColor?: string | null;
     bodyBgColor?: string | null;
   };
@@ -3574,6 +3581,7 @@ export interface Setting {
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
+  headerStyle?: T;
   navItems?:
     | T
     | {
@@ -3683,6 +3691,7 @@ export interface SettingsSelect<T extends boolean = true> {
     | {
         primaryColor?: T;
         secondaryColor?: T;
+        textColor?: T;
         linkColor?: T;
         bodyBgColor?: T;
       };

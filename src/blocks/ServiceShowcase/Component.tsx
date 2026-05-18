@@ -98,6 +98,13 @@ type ServiceShowcaseProps = {
   // Animation
   enableAnimation?: boolean | null
   id?: string | null
+
+  // Theme settings from parent page
+  settings?: {
+    primaryColor?: string
+    secondaryColor?: string
+    linkColor?: string
+  }
 }
 
 export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
@@ -121,7 +128,17 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
   ctaBgColor,
   ctaTextColor,
   enableAnimation = true,
+  settings,
 }) => {
+  // Resolve theme colours with fallback to CSS variables
+  const primary = settings?.primaryColor || 'var(--color-primary)'
+  const secondary = settings?.secondaryColor || 'var(--color-secondary)'
+  const linkColor = settings?.linkColor || 'var(--color-link)'
+  const textColor = 'var(--color-text)'
+  const muted = 'var(--color-muted)'
+  const surface = 'var(--color-surface)'
+  const border = 'var(--color-border)'
+
   const wrapper = (children: React.ReactNode, delay?: number) =>
     enableAnimation ? (
       <AnimateOnScroll preset="fadeUp" delay={delay}>
@@ -131,7 +148,6 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
       <>{children}</>
     )
 
-  // Map height preset to Tailwind classes
   const heightMap: Record<string, string> = {
     sm: 'min-h-[300px]',
     md: 'min-h-[420px]',
@@ -165,7 +181,7 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
                   className="text-5xl md:text-6xl mb-6"
                   style={{
                     fontFamily: 'var(--font-heading)',
-                    color: headingColor || 'var(--color-primary)',
+                    color: headingColor || primary,
                   }}
                 >
                   {heading}
@@ -174,7 +190,7 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
               {subheading && (
                 <p
                   className="text-xl max-w-3xl mx-auto"
-                  style={{ color: subheadingColor || 'var(--color-text)' }}
+                  style={{ color: subheadingColor || textColor }}
                 >
                   {subheading}
                 </p>
@@ -185,10 +201,7 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
       </section>
 
       {/* ========== SERVICE CARDS AREA ========== */}
-      <section
-        className="py-20"
-        style={{ backgroundColor: serviceBackgroundColor || 'var(--color-surface)' }}
-      >
+      <section className="py-20" style={{ backgroundColor: serviceBackgroundColor || surface }}>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="space-y-12">
             {services?.map((service, index) => {
@@ -199,17 +212,16 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
                     <div
                       className="rounded-lg p-8 shadow-lg border-2 hover:shadow-xl transition-shadow"
                       style={{
-                        backgroundColor: service.cardBgColor || 'var(--color-surface)',
-                        borderColor: service.cardBorderColor || 'var(--color-border)',
+                        backgroundColor: service.cardBgColor || surface,
+                        borderColor: service.cardBorderColor || border,
                       }}
                     >
                       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        {/* Icon and Title */}
                         <div className="lg:col-span-1">
                           <div
                             className="w-20 h-20 rounded-full flex items-center justify-center mb-4"
                             style={{
-                              backgroundColor: service.iconBgColor || 'var(--color-primary)',
+                              backgroundColor: service.iconBgColor || primary,
                             }}
                           >
                             <IconComponent
@@ -221,20 +233,16 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
                             className="text-3xl mb-2"
                             style={{
                               fontFamily: 'var(--font-heading)',
-                              color: service.titleColor || 'var(--color-text)',
+                              color: service.titleColor || textColor,
                             }}
                           >
                             {service.title}
                           </h3>
                         </div>
-
-                        {/* Description and Features */}
                         <div className="lg:col-span-2">
                           <p
                             className="text-lg mb-6"
-                            style={{
-                              color: service.descriptionColor || 'var(--color-muted)',
-                            }}
+                            style={{ color: service.descriptionColor || muted }}
                           >
                             {service.description}
                           </p>
@@ -245,12 +253,12 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
                                   <CheckCircle
                                     className="w-5 h-5 flex-shrink-0"
                                     style={{
-                                      color: service.featureCheckColor || 'var(--color-primary)',
+                                      color: service.featureCheckColor || primary,
                                     }}
                                   />
                                   <span
                                     style={{
-                                      color: service.featureTextColor || 'var(--color-text)',
+                                      color: service.featureTextColor || textColor,
                                     }}
                                   >
                                     {feature.text}
@@ -285,7 +293,7 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
                     className="text-4xl md:text-5xl mb-4"
                     style={{
                       fontFamily: 'var(--font-heading)',
-                      color: whyChooseUsHeadingColor || 'var(--color-primary)',
+                      color: whyChooseUsHeadingColor || primary,
                     }}
                   >
                     {whyChooseUsHeading}
@@ -303,20 +311,17 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
                       <div className="text-center">
                         <div
                           className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4"
-                          style={{ backgroundColor: item.iconBgColor || 'var(--color-primary)' }}
+                          style={{ backgroundColor: item.iconBgColor || primary }}
                         >
                           <IconComponent
                             className="w-8 h-8"
                             style={{ color: item.iconColor || '#1A1A1A' }}
                           />
                         </div>
-                        <h3
-                          className="text-2xl mb-3"
-                          style={{ color: item.titleColor || 'var(--color-primary)' }}
-                        >
+                        <h3 className="text-2xl mb-3" style={{ color: item.titleColor || primary }}>
                           {item.title}
                         </h3>
-                        <p style={{ color: item.descriptionColor || 'var(--color-text)' }}>
+                        <p style={{ color: item.descriptionColor || textColor }}>
                           {item.description}
                         </p>
                       </div>,
@@ -327,7 +332,6 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
               })}
             </div>
 
-            {/* CTA – right inside the same section */}
             {ctaLabel && ctaUrl && (
               <div className="text-center mt-16">
                 {wrapper(
@@ -336,7 +340,7 @@ export const ServiceShowcaseBlockComponent: React.FC<ServiceShowcaseProps> = ({
                     target={ctaNewTab ? '_blank' : undefined}
                     className="inline-block px-8 py-4 rounded-lg text-lg transition-all hover:shadow-lg"
                     style={{
-                      backgroundColor: ctaBgColor || 'var(--color-primary)',
+                      backgroundColor: ctaBgColor || primary,
                       color: ctaTextColor || '#1A1A1A',
                     }}
                   >

@@ -16,6 +16,7 @@ type StyleProps = {
   bodyBgColor?: string
   headingFont?: string
   bodyFont?: string
+  textColor?: string // ← added
 }
 
 type Props = {
@@ -32,6 +33,7 @@ export const Sidebar: React.FC<Props> = ({
   bodyBgColor = '#040d10',
   headingFont = 'Baskervville, serif',
   bodyFont = 'Prompt, sans-serif',
+  textColor = '#FFFFFF',
 }) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -45,7 +47,7 @@ export const Sidebar: React.FC<Props> = ({
   }, [])
 
   const SidebarContent = () => (
-    <div className="space-y-8" style={{ fontFamily: bodyFont }}>
+    <div className="space-y-8" style={{ fontFamily: bodyFont, color: textColor }}>
       <div>
         <h3
           className="text-lg font-semibold mb-4"
@@ -104,7 +106,6 @@ export const Sidebar: React.FC<Props> = ({
         <ul className="space-y-4">
           {recentPosts.map((post) => (
             <li key={post.id} className="flex gap-3">
-              {/* Uniform square image container */}
               <div className="relative w-16 h-16 flex-shrink-0 rounded overflow-hidden bg-gray-800">
                 {post.heroImage && typeof post.heroImage === 'object' && post.heroImage.url ? (
                   <Image src={post.heroImage.url} alt={post.title} fill className="object-cover" />
@@ -127,7 +128,7 @@ export const Sidebar: React.FC<Props> = ({
                   {post.title}
                 </Link>
                 {post.publishedAt && (
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-xs mt-1" style={{ color: textColor, opacity: 0.6 }}>
                     {new Date(post.publishedAt).toLocaleDateString()}
                   </p>
                 )}
@@ -139,7 +140,6 @@ export const Sidebar: React.FC<Props> = ({
     </div>
   )
 
-  // Mobile: top dropdown
   if (isMobile) {
     return (
       <div className="mb-6">
@@ -171,7 +171,6 @@ export const Sidebar: React.FC<Props> = ({
     )
   }
 
-  // Desktop: left-side vertical tab
   return (
     <>
       <button
@@ -199,12 +198,10 @@ export const Sidebar: React.FC<Props> = ({
         </span>
       </button>
 
-      {/* Overlay */}
       {isDrawerOpen && (
         <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setIsDrawerOpen(false)} />
       )}
 
-      {/* Drawer panel - slides from left */}
       <div
         className={cn(
           'fixed top-0 left-0 h-full w-80 border-r border-white/10 z-50 transition-transform duration-300 overflow-y-auto',
@@ -221,7 +218,7 @@ export const Sidebar: React.FC<Props> = ({
               Explore
             </h3>
             <button onClick={() => setIsDrawerOpen(false)}>
-              <X size={20} className="text-white" />
+              <X size={20} style={{ color: textColor }} />
             </button>
           </div>
           <SidebarContent />

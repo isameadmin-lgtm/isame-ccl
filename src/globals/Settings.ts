@@ -223,6 +223,21 @@ export const Settings: GlobalConfig = {
               type: 'row',
               fields: [
                 {
+                  name: 'textColor',
+                  type: 'text',
+                  label: 'Text Color',
+                  admin: {
+                    components: {
+                      Field: '@/components/ThemeColorPicker#default',
+                    },
+                  },
+                },
+              ],
+            },
+            {
+              type: 'row',
+              fields: [
+                {
                   name: 'linkColor',
                   type: 'text',
                   label: 'Link Color',

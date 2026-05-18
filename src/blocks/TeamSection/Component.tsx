@@ -17,26 +17,41 @@ type TeamSectionProps = {
   content?: any
   quoteText?: string | null
   quoteBorderColor?: string | null
-  quoteTextColor?: string | null // 👈 new prop
+  quoteTextColor?: string | null
   enableAnimation?: boolean | null
   id?: string | null
+  // Theme settings from parent page
+  settings?: {
+    primaryColor?: string
+    secondaryColor?: string
+    linkColor?: string
+  }
 }
 
 export const TeamSectionBlockComponent: React.FC<TeamSectionProps> = ({
   backgroundColor,
   contentWidth = 'contained',
   image,
-  overlayGradientStart = '#D4AF37',
-  overlayGradientEnd = '#A7A9AC',
+  overlayGradientStart,
+  overlayGradientEnd,
   overlayOpacity = 0.1,
   heading,
   headingColor,
   content,
   quoteText,
   quoteBorderColor,
-  quoteTextColor, // 👈 destructure
+  quoteTextColor,
   enableAnimation = true,
+  settings,
 }) => {
+  // Resolve theme colours
+  const primary = settings?.primaryColor || 'var(--color-primary)'
+  const secondary = settings?.secondaryColor || 'var(--color-secondary)'
+
+  // Default gradient colours – use theme if admin left them empty
+  const gradientStart = overlayGradientStart || primary
+  const gradientEnd = overlayGradientEnd || secondary
+
   const imgUrl =
     typeof image === 'object' && image !== null && 'url' in image
       ? image.url
@@ -79,7 +94,7 @@ export const TeamSectionBlockComponent: React.FC<TeamSectionProps> = ({
                   <div
                     className="absolute inset-0"
                     style={{
-                      background: `linear-gradient(135deg, ${overlayGradientStart || 'transparent'} 0%, ${overlayGradientEnd || 'transparent'} 100%)`,
+                      background: `linear-gradient(135deg, ${gradientStart} 0%, ${gradientEnd} 100%)`,
                       opacity: overlayOpacity ?? 0.1,
                     }}
                   />
@@ -98,7 +113,7 @@ export const TeamSectionBlockComponent: React.FC<TeamSectionProps> = ({
                   className="text-4xl md:text-5xl mb-6"
                   style={{
                     fontFamily: 'var(--font-heading)',
-                    color: headingColor || 'var(--color-primary)',
+                    color: headingColor || primary,
                   }}
                 >
                   {heading}
@@ -119,7 +134,7 @@ export const TeamSectionBlockComponent: React.FC<TeamSectionProps> = ({
                   className="mt-8 p-6 rounded-lg"
                   style={{
                     backgroundColor: 'var(--color-surface)',
-                    border: `2px solid ${quoteBorderColor || 'var(--color-primary)'}`,
+                    border: `2px solid ${quoteBorderColor || primary}`,
                   }}
                 >
                   <p

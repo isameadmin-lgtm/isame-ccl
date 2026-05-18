@@ -2,15 +2,15 @@ export const THEME_PRESETS = {
   isame: {
     label: 'Isame Collection',
     colors: {
-      primary: '#D4AF37',
-      secondary: '#A7A9AC',
-      accent: '#E6B800',
-      background: '#1A1A1A',
-      surface: '#FFFFFF',
-      text: '#FFFFFF',
-      muted: '#717182',
-      border: '#A7A9AC',
-      link: '#D4AF37',
+      primary: '#D4AF37', // gold – same as before
+      secondary: '#A7A9AC', // silver – same as before
+      accent: '#C9A632', // slightly darker gold
+      background: '#FFFFFF',
+      surface: '#F9F9F9',
+      text: '#1A1A1A', // dark text
+      muted: '#4B5563',
+      border: '#D1D5DB',
+      link: '#D4AF37', // gold links
     },
     typography: {
       headingFont: 'Playfair Display',

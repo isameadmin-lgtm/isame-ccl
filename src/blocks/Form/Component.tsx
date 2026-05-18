@@ -22,6 +22,12 @@ export type FormBlockType = {
 export const FormBlock: React.FC<
   {
     id?: string
+    settings?: {
+      // ← NEW: theme settings from the page
+      primaryColor?: string
+      secondaryColor?: string
+      linkColor?: string
+    }
   } & FormBlockType
 > = (props) => {
   const {
@@ -29,7 +35,13 @@ export const FormBlock: React.FC<
     form: formFromProps,
     form: { id: formID, confirmationMessage, confirmationType, redirect, submitButtonLabel } = {},
     introContent,
+    settings, // ← destructure the new prop
   } = props
+
+  // Resolve theme colors with fallbacks (keep existing defaults where needed)
+  const primary = settings?.primaryColor || '#D4AF37'
+  const secondary = settings?.secondaryColor || '#A7A9AC'
+  const link = settings?.linkColor || primary
 
   const formMethods = useForm({
     defaultValues: formFromProps.fields,
@@ -57,7 +69,6 @@ export const FormBlock: React.FC<
           value,
         }))
 
-        // delay loading indicator by 1s
         loadingTimerID = setTimeout(() => {
           setIsLoading(true)
         }, 1000)
@@ -94,9 +105,7 @@ export const FormBlock: React.FC<
 
           if (confirmationType === 'redirect' && redirect) {
             const { url } = redirect
-
             const redirectUrl = url
-
             if (redirectUrl) router.push(redirectUrl)
           }
         } catch (err) {
@@ -118,20 +127,27 @@ export const FormBlock: React.FC<
       {enableIntro && introContent && !hasSubmitted && (
         <RichText className="mb-8 lg:mb-12" data={introContent} enableGutter={false} />
       )}
-      <div className="p-4 lg:p-6 border border-border rounded-[0.8rem]">
+      <div
+        className="p-4 lg:p-6 rounded-[0.8rem]"
+        style={{
+          borderColor: secondary, // ← theme border color (replaces Tailwind 'border-border')
+          borderWidth: '1px',
+        }}
+      >
         <FormProvider {...formMethods}>
           {!isLoading && hasSubmitted && confirmationType === 'message' && (
             <RichText data={confirmationMessage} />
           )}
           {isLoading && !hasSubmitted && <p>Loading, please wait...</p>}
-          {error && <div>{`${error.status || '500'}: ${error.message || ''}`}</div>}
+          {error && (
+            <div style={{ color: 'red' }}>{`${error.status || '500'}: ${error.message || ''}`}</div>
+          )}
           {!hasSubmitted && (
             <form id={formID} onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4 last:mb-0">
                 {formFromProps &&
                   formFromProps.fields &&
                   formFromProps.fields?.map((field, index) => {
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const Field: React.FC<any> = fields?.[field.blockType as keyof typeof fields]
                     if (Field) {
                       return (
@@ -151,9 +167,26 @@ export const FormBlock: React.FC<
                   })}
               </div>
 
-              <Button form={formID} type="submit" variant="default">
-                {submitButtonLabel}
-              </Button>
+              {/* Submit Button – now dynamic */}
+              <button
+                type="submit"
+                className="px-6 py-2 rounded-md font-medium transition-colors"
+                style={{
+                  backgroundColor: primary,
+                  color: '#000000', // dark text for contrast on gold
+                  border: `1px solid ${primary}`,
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = link
+                  e.currentTarget.style.borderColor = link
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = primary
+                  e.currentTarget.style.borderColor = primary
+                }}
+              >
+                {submitButtonLabel || 'Submit'}
+              </button>
             </form>
           )}
         </FormProvider>

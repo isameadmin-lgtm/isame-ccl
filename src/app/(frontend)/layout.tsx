@@ -19,7 +19,6 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { SiteSettingsProvider } from '@/providers/SiteSettingsProvider'
 import { LanguageProvider } from '@/providers/Language'
 
-// Preload all possible font families as CSS variables (fallback)
 const baskervville = Baskervville({
   weight: '400',
   subsets: ['latin'],
@@ -44,15 +43,11 @@ const poppins = Poppins({
   display: 'swap',
 })
 
-// Helper to extract media URL
 const getMediaUrl = (media: any): string | null => {
   if (!media || typeof media === 'string') return null
   return media.url || null
 }
 
-// ------------------------------------------------------------
-// Locale helper – reads the cookie set by the language toggle
-// ------------------------------------------------------------
 const getLocale = async (): Promise<'en' | 'es'> => {
   const cookieStore = await cookies()
   const localeCookie = cookieStore.get('locale')
@@ -63,19 +58,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { isEnabled } = await draftMode()
   const payload = await getPayload({ config })
 
-  // Read the current locale from the cookie
   const locale = await getLocale()
 
-  // Fetch globals in the correct language
   const settings = await payload.findGlobal({ slug: 'settings', locale })
   const footer = await payload.findGlobal({ slug: 'footer', locale })
-  const header = await payload.findGlobal({ slug: 'header', locale }) // 👈 new
+  const header = await payload.findGlobal({ slug: 'header', locale })
 
   // ----- THEME PRESET -----
   const themePreset = settings?.themePreset || 'isame'
   const preset = THEME_PRESETS[themePreset as keyof typeof THEME_PRESETS] ?? THEME_PRESETS.isame
 
-  // ----- FONT FAMILIES (with overrides) -----
+  // ----- FONT FAMILIES -----
   const headingFont =
     settings?.typography?.headingFontFamily ||
     preset?.typography?.headingFont ||
@@ -85,11 +78,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const heroHeadingFont = settings?.hero?.headingFontFamily || headingFont
   const heroSubheadingFont = settings?.hero?.subheadingFontFamily || bodyFont
 
-  // ----- COLOURS (with overrides) -----
+  // ----- COLOURS -----
   const primaryColor = settings?.colors?.primaryColor || preset?.colors?.primary || '#D4AF37'
   const secondaryColor = settings?.colors?.secondaryColor || preset?.colors?.secondary || '#A7A9AC'
   const linkColor = settings?.colors?.linkColor || preset?.colors?.link || '#D4AF37'
   const bodyBgColor = settings?.colors?.bodyBgColor || preset?.colors?.background || '#1A1A1A'
+  const textColor = settings?.colors?.textColor || preset?.colors?.text || '#FFFFFF'
+
+  // New: surface, border, muted (fall back to preset, then sensible defaults)
+  const surfaceColor = settings?.colors?.surfaceColor || preset?.colors?.surface || '#1A1A1A'
+  const borderColor = settings?.colors?.borderColor || preset?.colors?.border || '#333333'
+  const mutedColor = settings?.colors?.mutedColor || preset?.colors?.muted || '#9CA3AF'
 
   // ----- FAVICONS -----
   const favicon = getMediaUrl(settings?.branding?.favicon)
@@ -99,7 +98,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const androidChrome512 = getMediaUrl(settings?.branding?.androidChrome512)
   const manifest = getMediaUrl(settings?.branding?.manifest)
 
-  // ----- TRACKING & ANALYTICS -----
+  // ----- TRACKING -----
   const tracking = settings?.tracking || {}
   const googleAnalyticsId = tracking.googleAnalyticsId
   const googleTagManagerId = tracking.googleTagManagerId
@@ -107,7 +106,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const customHeadScripts = tracking.customHeadScripts
   const customBodyScripts = tracking.customBodyScripts
 
-  // ----- CSS VARIABLES TO INJECT -----
+  // ----- CSS VARIABLES -----
   const cssVars: Record<string, string> = {
     '--font-heading': headingFont,
     '--font-body': bodyFont,
@@ -117,9 +116,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     '--color-secondary': secondaryColor,
     '--color-link': linkColor,
     '--bg-body': bodyBgColor,
+    '--color-text': textColor,
+    '--color-surface': surfaceColor,
+    '--color-border': borderColor,
+    '--color-muted': mutedColor,
   }
 
-  // ----- UNIQUE GOOGLE FONTS TO LOAD -----
+  // ----- GOOGLE FONTS TO LOAD -----
   const fontFamilies = [headingFont, bodyFont, heroHeadingFont, heroSubheadingFont]
     .map((f) => f.split(',')[0].trim())
     .filter((f) => f.includes(' '))
@@ -228,7 +231,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <ThemeInit />
             <Providers>
               <AdminBar adminBarProps={{ preview: isEnabled }} />
-              {/* 👇 Now passes both settings and header */}
               <Header settings={settings} header={header} />
               <main className="w-full">{children}</main>
               <Footer footer={footer} />

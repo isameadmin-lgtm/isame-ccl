@@ -48,6 +48,12 @@ type ValuesProps = {
   values?: ValueCard[] | null
   enableAnimation?: boolean | null
   id?: string | null
+  // Theme settings from parent page
+  settings?: {
+    primaryColor?: string
+    secondaryColor?: string
+    linkColor?: string
+  }
 }
 
 export const ValuesBlockComponent: React.FC<ValuesProps> = ({
@@ -58,8 +64,12 @@ export const ValuesBlockComponent: React.FC<ValuesProps> = ({
   subheadingColor,
   values,
   enableAnimation = true,
+  settings,
 }) => {
   if (!values || values.length === 0) return null
+
+  // Resolve theme primary (fallback to CSS variable)
+  const primary = settings?.primaryColor || 'var(--color-primary)'
 
   return (
     <section
@@ -75,7 +85,7 @@ export const ValuesBlockComponent: React.FC<ValuesProps> = ({
                 className="text-4xl md:text-5xl mb-4"
                 style={{
                   fontFamily: 'var(--font-heading)',
-                  color: headingColor || 'var(--color-primary)',
+                  color: headingColor || primary,
                 }}
               >
                 {heading}
@@ -104,7 +114,7 @@ export const ValuesBlockComponent: React.FC<ValuesProps> = ({
                 <div
                   className="w-16 h-16 rounded-full flex items-center justify-center mb-4"
                   style={{
-                    backgroundColor: value.iconBackgroundColor || 'var(--color-primary)',
+                    backgroundColor: value.iconBackgroundColor || primary,
                   }}
                 >
                   <IconComponent
@@ -127,7 +137,6 @@ export const ValuesBlockComponent: React.FC<ValuesProps> = ({
               </div>
             )
 
-            // Ensure the wrapper fills the grid cell height
             const wrapperClasses = 'h-full'
 
             return enableAnimation ? (

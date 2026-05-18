@@ -34,6 +34,12 @@ type CardGridProps = {
   cardColumns?: number | string
   className?: string
   enableFooterCta?: boolean
+  settings?: {
+    // 👈 new
+    primaryColor?: string
+    secondaryColor?: string
+    linkColor?: string
+  }
   footerCta?: {
     label?: string
     link?: string
@@ -131,6 +137,7 @@ export const CardGridBlock: React.FC<CardGridProps> = ({
   className = '',
   enableFooterCta,
   footerCta,
+  settings, //
 }) => {
   const rgb = hexToRgb(overlayColor)
   const panelBg = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.6)`
@@ -138,6 +145,8 @@ export const CardGridBlock: React.FC<CardGridProps> = ({
 
   const height = typeof cardHeight === 'number' ? cardHeight : Number(cardHeight) || 540
   const columns = typeof cardColumns === 'number' ? cardColumns : Number(cardColumns) || 3
+  const primary = settings?.primaryColor || '#FFD700'
+  const secondary = settings?.secondaryColor || '#E6B800'
 
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
   const [isDesktop, setIsDesktop] = useState(true)

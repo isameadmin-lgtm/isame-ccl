@@ -3,7 +3,7 @@
 import React from 'react'
 import Link from 'next/link'
 import { Quote } from 'lucide-react'
-import AnimateOnScroll from '../../components/AnimateOnScroll' // ✅ relative import
+import AnimateOnScroll from '../../components/AnimateOnScroll'
 
 type TestimonialsProps = {
   backgroundColor?: string
@@ -30,6 +30,12 @@ type TestimonialsProps = {
   ctaTextColor?: string
   enableAnimation?: boolean
   id?: string | null
+  // Theme settings from parent page
+  settings?: {
+    primaryColor?: string
+    secondaryColor?: string
+    linkColor?: string
+  }
 }
 
 export const TestimonialsBlockComponent: React.FC<TestimonialsProps> = ({
@@ -46,12 +52,16 @@ export const TestimonialsBlockComponent: React.FC<TestimonialsProps> = ({
   ctaBgColor,
   ctaTextColor,
   enableAnimation = true,
+  settings,
 }) => {
   if (!testimonials || testimonials.length === 0) return null
 
   const cols = parseInt(columns, 10)
   const gridCols = ['', 'grid-cols-2', 'grid-cols-3']
   const colClass = gridCols[Math.min(cols, 3)] || 'grid-cols-2'
+
+  // Resolve theme primary colour (fallback to CSS variable)
+  const primary = settings?.primaryColor || 'var(--color-primary)'
 
   const wrapper = (children: React.ReactNode, delay: number = 0) =>
     enableAnimation ? (
@@ -72,7 +82,7 @@ export const TestimonialsBlockComponent: React.FC<TestimonialsProps> = ({
               className="text-4xl md:text-5xl mb-4"
               style={{
                 fontFamily: 'var(--font-heading)',
-                color: headingColor || 'var(--color-primary)',
+                color: headingColor || primary,
               }}
             >
               {heading}
@@ -90,7 +100,7 @@ export const TestimonialsBlockComponent: React.FC<TestimonialsProps> = ({
           {testimonials.map((testimonial, index) => {
             const cardBg = testimonial.cardBgColor || 'var(--color-surface)'
             const cardBorder = testimonial.cardBorderColor || 'var(--color-border)'
-            const iconColor = testimonial.quoteIconColor || 'var(--color-primary)'
+            const iconColor = testimonial.quoteIconColor || primary // ← now dynamic
             const authorColor = testimonial.authorColor || 'var(--color-text)'
             const businessColor = testimonial.businessColor || 'var(--color-muted)'
 
@@ -144,7 +154,7 @@ export const TestimonialsBlockComponent: React.FC<TestimonialsProps> = ({
               rel={ctaNewTab ? 'noopener noreferrer' : undefined}
               className="inline-block px-8 py-4 rounded-lg text-lg transition-all hover:shadow-lg"
               style={{
-                backgroundColor: ctaBgColor || 'var(--color-primary)',
+                backgroundColor: ctaBgColor || primary,
                 color: ctaTextColor || '#1A1A1A',
               }}
             >

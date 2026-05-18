@@ -52,6 +52,13 @@ type FeatureSectionProps = {
   }[]
   enableAnimation?: boolean
   id?: string | null
+  settings?: {
+    // ← new: theme settings from the page
+    primaryColor?: string
+    secondaryColor?: string
+    linkColor?: string
+    // You could also include surface, border, muted if needed
+  }
 }
 
 export const FeatureSectionBlockComponent: React.FC<FeatureSectionProps> = ({
@@ -63,13 +70,21 @@ export const FeatureSectionBlockComponent: React.FC<FeatureSectionProps> = ({
   columns = '3',
   features,
   enableAnimation = true,
+  settings,
 }) => {
   if (!features || features.length === 0) return null
 
   const cols = parseInt(columns, 10)
-  // Correct grid column classes – index 2 = 'grid-cols-2', 3 = 'grid-cols-3', 4 = 'grid-cols-4'
   const gridCols = ['', 'grid-cols-2', 'grid-cols-3', 'grid-cols-4']
   const colClass = gridCols[Math.min(cols, 4)] || 'grid-cols-3'
+
+  // Resolve theme colours (fallback to CSS variables)
+  const primary = settings?.primaryColor || 'var(--color-primary)'
+  const secondary = settings?.secondaryColor || 'var(--color-secondary)'
+  const textColor = 'var(--color-text)'
+  const muted = 'var(--color-muted)'
+  const surface = 'var(--color-surface)'
+  const border = 'var(--color-border)'
 
   return (
     <section
@@ -79,14 +94,13 @@ export const FeatureSectionBlockComponent: React.FC<FeatureSectionProps> = ({
       }}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Section heading */}
         <div className="text-center mb-16">
           {heading && (
             <h2
               className="text-4xl md:text-5xl mb-4"
               style={{
                 fontFamily: 'var(--font-heading)',
-                color: headingColor || 'var(--color-primary)',
+                color: headingColor || primary,
               }}
             >
               {heading}
@@ -95,32 +109,29 @@ export const FeatureSectionBlockComponent: React.FC<FeatureSectionProps> = ({
           {subheading && (
             <p
               className="text-xl max-w-2xl mx-auto"
-              style={{ color: subheadingColor || 'var(--color-text)' }}
+              style={{ color: subheadingColor || textColor }}
             >
               {subheading}
             </p>
           )}
         </div>
 
-        {/* Feature cards – equal height guaranteed */}
         <div className={`grid grid-cols-1 md:${colClass} gap-8`}>
           {features.map((feature, index) => {
             const IconComponent = ICON_MAP[feature.icon] || Heart
-            const isAnimated = enableAnimation
 
             const cardContent = (
               <div
                 className="flex flex-col h-full p-8 rounded-lg border-2 hover:shadow-xl transition-shadow"
                 style={{
-                  backgroundColor: feature.cardBgColor || 'var(--color-surface)',
-                  borderColor: feature.cardBorderColor || 'var(--color-border)',
+                  backgroundColor: feature.cardBgColor || surface,
+                  borderColor: feature.cardBorderColor || border,
                 }}
               >
-                {/* Icon circle */}
                 <div
                   className="w-16 h-16 rounded-full flex items-center justify-center mb-6 mx-auto"
                   style={{
-                    backgroundColor: feature.iconBgColor || 'var(--color-primary)',
+                    backgroundColor: feature.iconBgColor || primary,
                   }}
                 >
                   <IconComponent
@@ -128,42 +139,35 @@ export const FeatureSectionBlockComponent: React.FC<FeatureSectionProps> = ({
                     style={{ color: feature.iconColor || '#1A1A1A' }}
                   />
                 </div>
-
-                {/* Title */}
                 <h3
                   className="text-2xl mb-4 text-center"
                   style={{
                     fontFamily: 'var(--font-heading)',
-                    color: feature.titleColor || 'var(--color-text)',
+                    color: feature.titleColor || textColor,
                   }}
                 >
                   {feature.title}
                 </h3>
-
-                {/* Description – expands naturally */}
                 <p
                   className="leading-relaxed flex-1 text-center"
-                  style={{ color: feature.descriptionColor || 'var(--color-muted)' }}
+                  style={{ color: feature.descriptionColor || muted }}
                 >
                   {feature.description}
                 </p>
               </div>
             )
 
-            // Ensure the wrapper stretches to full height of the grid cell
-            const wrapperClasses = 'h-full'
-
-            return isAnimated ? (
+            return enableAnimation ? (
               <AnimateOnScroll
                 key={feature.id || index}
                 preset="fadeUp"
                 delay={index * 0.1}
-                className={wrapperClasses}
+                className="h-full"
               >
                 {cardContent}
               </AnimateOnScroll>
             ) : (
-              <div key={feature.id || index} className={wrapperClasses}>
+              <div key={feature.id || index} className="h-full">
                 {cardContent}
               </div>
             )
