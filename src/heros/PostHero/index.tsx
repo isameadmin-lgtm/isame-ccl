@@ -43,7 +43,7 @@ export const PostHero: React.FC<{ post: Post }> = async ({ post }) => {
   const heroImageUrl = heroImageUrlRaw ? optimizedCloudinaryUrl(heroImageUrlRaw) : null
 
   return (
-    <div className="relative -mt-[10.4rem] flex items-end min-h-[70vh]">
+    <div className="relative flex items-end min-h-[70vh]">
       <div className="absolute inset-0">
         {heroImageUrl ? (
           <Image
