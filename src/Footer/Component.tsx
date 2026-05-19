@@ -171,9 +171,9 @@ export const Footer: React.FC<FooterProps> = ({ footer, className }) => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* 👇 Grid – 1 col on mobile, 2 cols on small screens, 4 cols on desktop */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center sm:text-left">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center sm:text-center">
           {/* ── Brand column ── */}
-          <div className="flex flex-col items-center sm:items-start">
+          <div className="flex flex-col items-center sm:items-center">
             {logoMedia && <div className="mb-4">{renderFooterLogo()}</div>}
             {!logoMedia && (
               <h3
@@ -279,7 +279,7 @@ export const Footer: React.FC<FooterProps> = ({ footer, className }) => {
             <ul className="space-y-3 text-sm">
               {reachUs?.location && (
                 <li
-                  className="flex items-start gap-2 justify-center sm:justify-start"
+                  className="flex items-start gap-2 justify-center sm:justify-center"
                   style={{ color: resolvedText }}
                 >
                   <MapPin className="w-4 h-4 mt-1 flex-shrink-0" style={{ color: resolvedIcon }} />
@@ -288,7 +288,7 @@ export const Footer: React.FC<FooterProps> = ({ footer, className }) => {
               )}
               {reachUs?.phone && (
                 <li
-                  className="flex items-center gap-2 justify-center sm:justify-start"
+                  className="flex items-center gap-2 justify-center sm:justify-center"
                   style={{ color: resolvedText }}
                 >
                   <Phone className="w-4 h-4 flex-shrink-0" style={{ color: resolvedIcon }} />
@@ -303,7 +303,7 @@ export const Footer: React.FC<FooterProps> = ({ footer, className }) => {
               )}
               {reachUs?.email && (
                 <li
-                  className="flex items-center gap-2 justify-center sm:justify-start"
+                  className="flex items-center gap-2 justify-center sm:justify-center"
                   style={{ color: resolvedText }}
                 >
                   <Mail className="w-4 h-4 flex-shrink-0" style={{ color: resolvedIcon }} />
@@ -317,7 +317,7 @@ export const Footer: React.FC<FooterProps> = ({ footer, className }) => {
                 </li>
               )}
               <li
-                className="flex items-center gap-2 justify-center sm:justify-start"
+                className="flex items-center gap-2 justify-center sm:justify-center"
                 style={{ color: resolvedText }}
               >
                 <Globe className="w-4 h-4 flex-shrink-0" style={{ color: resolvedIcon }} />
