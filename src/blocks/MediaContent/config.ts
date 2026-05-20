@@ -8,7 +8,7 @@ export const MediaContent: Block = {
     plural: 'Media & Content',
   },
   fields: [
-    // ---------- SECTION BACKGROUND ----------
+    // ---------- SECTION BACKGROUND (standalone) ----------
     {
       name: 'backgroundColor',
       type: 'text',
@@ -18,20 +18,31 @@ export const MediaContent: Block = {
         description: 'Leave empty for the theme default.',
       },
     },
-    // ---------- HEADING ----------
+
+    // ---------- HEADING ROW ----------
     {
-      name: 'heading',
-      type: 'text',
-      label: 'Heading',
-      localized: true,
-      defaultValue: 'Our Story',
+      type: 'row',
+      fields: [
+        {
+          name: 'heading',
+          type: 'text',
+          label: 'Heading',
+          localized: true,
+          defaultValue: 'Our Story',
+          admin: { width: '70%' },
+        },
+        {
+          name: 'headingColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '30%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+          },
+        },
+      ],
     },
-    {
-      name: 'headingColor',
-      type: 'text',
-      label: 'Heading Colour',
-      admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-    },
+
     // ---------- RICH TEXT CONTENT ----------
     {
       name: 'content',
@@ -45,8 +56,12 @@ export const MediaContent: Block = {
       name: 'textColor',
       type: 'text',
       label: 'Text Colour',
-      admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+      admin: {
+        components: { Field: '@/components/ThemeColorPicker#default' },
+        description: 'Applied to all text inside the content block.',
+      },
     },
+
     // ---------- IMAGE ----------
     {
       name: 'image',
@@ -74,6 +89,7 @@ export const MediaContent: Block = {
         description: 'Leave empty for auto height based on content.',
       },
     },
+
     // ---------- LAYOUT ----------
     {
       name: 'imagePosition',
@@ -85,7 +101,8 @@ export const MediaContent: Block = {
         { label: 'Image on Left', value: 'left' },
       ],
     },
-    // ---------- IMAGE OVERLAY (optional) ----------
+
+    // ---------- IMAGE OVERLAY (collapsible) ----------
     {
       name: 'enableOverlay',
       type: 'checkbox',
@@ -93,26 +110,34 @@ export const MediaContent: Block = {
       defaultValue: false,
     },
     {
-      name: 'overlayColor',
-      type: 'text',
-      label: 'Overlay Colour',
-      admin: {
-        condition: (_, siblingData) => siblingData?.enableOverlay,
-        components: { Field: '@/components/ThemeColorPicker#default' },
-      },
+      type: 'row',
+      fields: [
+        {
+          name: 'overlayColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '50%',
+            condition: (_, siblingData) => siblingData?.enableOverlay,
+            components: { Field: '@/components/ThemeColorPicker#default' },
+          },
+        },
+        {
+          name: 'overlayOpacity',
+          type: 'number',
+          label: 'Opacity',
+          defaultValue: 0.3,
+          min: 0,
+          max: 1,
+          admin: {
+            width: '50%',
+            condition: (_, siblingData) => siblingData?.enableOverlay,
+            step: 0.05,
+          },
+        },
+      ],
     },
-    {
-      name: 'overlayOpacity',
-      type: 'number',
-      label: 'Overlay Opacity',
-      defaultValue: 0.3,
-      min: 0,
-      max: 1,
-      admin: {
-        condition: (_, siblingData) => siblingData?.enableOverlay,
-        step: 0.05,
-      },
-    },
+
     // ---------- ANIMATION ----------
     {
       name: 'enableAnimation',

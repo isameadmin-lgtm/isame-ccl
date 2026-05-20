@@ -12,17 +12,18 @@ export const SplitContainer: Block = {
   },
   fields: [
     // =============================================
-    // BACKGROUND COLOUR – top of the block for easy access
+    // BACKGROUND COLOUR – compact swatch at the top
     // =============================================
     {
       name: 'backgroundColor',
       type: 'text',
-      label: 'Background Colour',
+      label: false, // swatch only – no text label needed
       admin: {
         components: { Field: '@/components/ThemeColorPicker#default' },
-        description: 'Leave empty for the theme default.',
+        description: 'Background colour for the entire container. Leave empty for theme default.',
       },
     },
+
     // =============================================
     // VERTICAL PADDING
     // =============================================
@@ -38,6 +39,7 @@ export const SplitContainer: Block = {
         { label: 'Extra Large', value: 'xl' },
       ],
     },
+
     // Number of columns (desktop)
     {
       name: 'columnsCount',
@@ -51,6 +53,7 @@ export const SplitContainer: Block = {
         { label: '4', value: '4' },
       ],
     },
+
     // Gap between items
     {
       name: 'gap',
@@ -64,6 +67,7 @@ export const SplitContainer: Block = {
         { label: 'Extra Large', value: 'xl' },
       ],
     },
+
     // =============================================
     // NESTED BLOCKS – you can add any combination
     // =============================================
@@ -71,12 +75,13 @@ export const SplitContainer: Block = {
       name: 'columns',
       type: 'blocks',
       label: 'Nested Blocks',
-      blocks: [Content, MediaBlock, FormBlock, ContactInfoBlock], // add more as needed
+      blocks: [Content, MediaBlock, FormBlock, ContactInfoBlock],
       required: true,
       admin: {
         description: 'Add one or more content, media, or form blocks.',
       },
     },
+
     // =============================================
     // ANIMATION TOGGLE
     // =============================================

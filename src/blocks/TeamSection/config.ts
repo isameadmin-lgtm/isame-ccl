@@ -44,20 +44,27 @@ export const TeamSectionBlock: Block = {
       admin: { initCollapsed: true },
       fields: [
         {
-          name: 'overlayGradientStart',
-          type: 'text',
-          label: 'Gradient Start Color',
-          admin: {
-            components: { Field: '@/components/ThemeColorPicker#default' },
-          },
-        },
-        {
-          name: 'overlayGradientEnd',
-          type: 'text',
-          label: 'Gradient End Color',
-          admin: {
-            components: { Field: '@/components/ThemeColorPicker#default' },
-          },
+          type: 'row',
+          fields: [
+            {
+              name: 'overlayGradientStart',
+              type: 'text',
+              label: false, // swatches only
+              admin: {
+                width: '50%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+            {
+              name: 'overlayGradientEnd',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '50%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
         },
         {
           name: 'overlayOpacity',
@@ -70,22 +77,29 @@ export const TeamSectionBlock: Block = {
         },
       ],
     },
-    // ---------- HEADING ----------
+    // ---------- HEADING (row: text + color swatch) ----------
     {
-      name: 'heading',
-      type: 'text',
-      label: 'Heading',
-      localized: true,
-      required: true,
-      defaultValue: 'About the Team',
-    },
-    {
-      name: 'headingColor',
-      type: 'text',
-      label: 'Heading Color',
-      admin: {
-        components: { Field: '@/components/ThemeColorPicker#default' },
-      },
+      type: 'row',
+      fields: [
+        {
+          name: 'heading',
+          type: 'text',
+          label: 'Heading',
+          localized: true,
+          required: true,
+          defaultValue: 'About the Team',
+          admin: { width: '70%' },
+        },
+        {
+          name: 'headingColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '30%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+          },
+        },
+      ],
     },
     // ---------- CONTENT (rich text) ----------
     {
@@ -112,21 +126,27 @@ export const TeamSectionBlock: Block = {
           localized: true,
         },
         {
-          name: 'quoteBorderColor',
-          type: 'text',
-          label: 'Quote Border Color',
-          admin: {
-            components: { Field: '@/components/ThemeColorPicker#default' },
-          },
-        },
-        {
-          name: 'quoteTextColor',
-          type: 'text',
-          label: 'Quote Text Color',
-          admin: {
-            components: { Field: '@/components/ThemeColorPicker#default' },
-            description: 'Leave empty for the theme text colour.',
-          },
+          type: 'row',
+          fields: [
+            {
+              name: 'quoteBorderColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '50%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+            {
+              name: 'quoteTextColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '50%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
         },
       ],
     },

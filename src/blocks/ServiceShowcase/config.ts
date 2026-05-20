@@ -45,33 +45,53 @@ export const ServiceShowcaseBlock: Block = {
       admin: { condition: (_, siblingData) => siblingData?.topHeight === 'custom' },
     },
 
-    // ---------- HEADING & SUBHEADING ----------
+    // ---------- HEADING ROW ----------
     {
-      name: 'heading',
-      type: 'text',
-      label: 'Section Heading',
-      localized: true,
-      defaultValue: 'Professional Debt Recovery for Belizean Enterprises',
+      type: 'row',
+      fields: [
+        {
+          name: 'heading',
+          type: 'text',
+          label: 'Section Heading',
+          localized: true,
+          defaultValue: 'Professional Debt Recovery for Belizean Enterprises',
+          admin: { width: '70%' },
+        },
+        {
+          name: 'headingColor',
+          type: 'text',
+          label: false, // swatch is self-explanatory
+          admin: {
+            width: '30%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+          },
+        },
+      ],
     },
+
+    // ---------- SUBHEADING ROW ----------
     {
-      name: 'headingColor',
-      type: 'text',
-      label: 'Heading Colour',
-      admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-    },
-    {
-      name: 'subheading',
-      type: 'textarea',
-      label: 'Subheading',
-      localized: true,
-      defaultValue:
-        'Comprehensive collection services designed to protect your business interests while maintaining ethical standards',
-    },
-    {
-      name: 'subheadingColor',
-      type: 'text',
-      label: 'Subheading Colour',
-      admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+      type: 'row',
+      fields: [
+        {
+          name: 'subheading',
+          type: 'textarea',
+          label: 'Subheading',
+          localized: true,
+          defaultValue:
+            'Comprehensive collection services designed to protect your business interests while maintaining ethical standards',
+          admin: { width: '70%' },
+        },
+        {
+          name: 'subheadingColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '30%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+          },
+        },
+      ],
     },
 
     // ============================================================
@@ -93,38 +113,99 @@ export const ServiceShowcaseBlock: Block = {
       minRows: 1,
       maxRows: 10,
       fields: [
+        // ── Icon row: icon selector + two swatches ──
         {
-          name: 'icon',
-          type: 'select',
-          label: 'Icon',
-          options: [
-            { label: 'Trending Up', value: 'trendingUp' },
-            { label: 'Scale', value: 'scale' },
-            { label: 'Users', value: 'users' },
-            { label: 'File Text', value: 'fileText' },
-            { label: 'Shield', value: 'shield' },
-            { label: 'Check Circle', value: 'checkCircle' },
-            { label: 'Star', value: 'star' },
-            { label: 'Award', value: 'award' },
-            { label: 'Briefcase', value: 'briefcase' },
-            { label: 'Handshake', value: 'handshake' },
+          type: 'row',
+          fields: [
+            {
+              name: 'icon',
+              type: 'select',
+              label: 'Icon',
+              options: [
+                { label: 'Trending Up', value: 'trendingUp' },
+                { label: 'Scale', value: 'scale' },
+                { label: 'Users', value: 'users' },
+                { label: 'File Text', value: 'fileText' },
+                { label: 'Shield', value: 'shield' },
+                { label: 'Check Circle', value: 'checkCircle' },
+                { label: 'Star', value: 'star' },
+                { label: 'Award', value: 'award' },
+                { label: 'Briefcase', value: 'briefcase' },
+                { label: 'Handshake', value: 'handshake' },
+              ],
+              required: true,
+              admin: { width: '40%' },
+            },
+            {
+              name: 'iconBgColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+            {
+              name: 'iconColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
           ],
-          required: true,
         },
+
+        // ── Title row: title + titleColor ──
         {
-          name: 'title',
-          type: 'text',
-          label: 'Service Title',
-          localized: true,
-          required: true,
+          type: 'row',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              label: 'Service Title',
+              localized: true,
+              required: true,
+              admin: { width: '70%' },
+            },
+            {
+              name: 'titleColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
         },
+
+        // ── Description row: description + descriptionColor ──
         {
-          name: 'description',
-          type: 'textarea',
-          label: 'Description',
-          localized: true,
-          required: true,
+          type: 'row',
+          fields: [
+            {
+              name: 'description',
+              type: 'textarea',
+              label: 'Description',
+              localized: true,
+              required: true,
+              admin: { width: '70%' },
+            },
+            {
+              name: 'descriptionColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
         },
+
+        // Feature bullets (unchanged – no colour pickers inline)
         {
           name: 'features',
           type: 'array',
@@ -139,58 +220,58 @@ export const ServiceShowcaseBlock: Block = {
             },
           ],
         },
-        // Per‑card colour overrides (unchanged)
+
+        // ── Card styling row (collapsible, just two swatches) ──
         {
           type: 'collapsible',
-          label: '🎨 Card Colours (optional)',
+          label: '🎨 Card Styling (optional)',
           fields: [
             {
-              name: 'cardBgColor',
-              type: 'text',
-              label: 'Card Background',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+              type: 'row',
+              fields: [
+                {
+                  name: 'cardBgColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+                {
+                  name: 'cardBorderColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+              ],
             },
+            // Optional additional overrides (if you still need them)
             {
-              name: 'cardBorderColor',
-              type: 'text',
-              label: 'Card Border',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'iconBgColor',
-              type: 'text',
-              label: 'Icon Circle Background',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'iconColor',
-              type: 'text',
-              label: 'Icon Colour (inside)',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'titleColor',
-              type: 'text',
-              label: 'Title Colour',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'descriptionColor',
-              type: 'text',
-              label: 'Description Colour',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'featureCheckColor',
-              type: 'text',
-              label: 'Feature Check Icon Colour',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'featureTextColor',
-              type: 'text',
-              label: 'Feature Text Colour',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+              type: 'row',
+              fields: [
+                {
+                  name: 'featureCheckColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+                {
+                  name: 'featureTextColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+              ],
             },
           ],
         },
@@ -214,18 +295,28 @@ export const ServiceShowcaseBlock: Block = {
             description: 'Background behind the items and the CTA.',
           },
         },
+        // Heading row
         {
-          name: 'whyChooseUsHeading',
-          type: 'text',
-          label: 'Heading',
-          localized: true,
-          defaultValue: 'Why Choose Isame?',
-        },
-        {
-          name: 'whyChooseUsHeadingColor',
-          type: 'text',
-          label: 'Heading Colour',
-          admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+          type: 'row',
+          fields: [
+            {
+              name: 'whyChooseUsHeading',
+              type: 'text',
+              label: 'Heading',
+              localized: true,
+              defaultValue: 'Why Choose Isame?',
+              admin: { width: '70%' },
+            },
+            {
+              name: 'whyChooseUsHeadingColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
         },
         {
           name: 'whyChooseUsItems',
@@ -234,61 +325,93 @@ export const ServiceShowcaseBlock: Block = {
           minRows: 0,
           maxRows: 6,
           fields: [
+            // ── Icon row ──
             {
-              name: 'icon',
-              type: 'select',
-              label: 'Icon',
-              options: [
-                { label: 'Shield', value: 'shield' },
-                { label: 'File Text', value: 'fileText' },
-                { label: 'Users', value: 'users' },
-                { label: 'Heart', value: 'heart' },
-                { label: 'Award', value: 'award' },
-                { label: 'Badge Check', value: 'badgeCheck' },
-                { label: 'Thumbs Up', value: 'thumbsUp' },
-                { label: 'Globe', value: 'globe' },
-                { label: 'Handshake', value: 'handshake' },
+              type: 'row',
+              fields: [
+                {
+                  name: 'icon',
+                  type: 'select',
+                  label: 'Icon',
+                  options: [
+                    { label: 'Shield', value: 'shield' },
+                    { label: 'File Text', value: 'fileText' },
+                    { label: 'Users', value: 'users' },
+                    { label: 'Heart', value: 'heart' },
+                    { label: 'Award', value: 'award' },
+                    { label: 'Badge Check', value: 'badgeCheck' },
+                    { label: 'Thumbs Up', value: 'thumbsUp' },
+                    { label: 'Globe', value: 'globe' },
+                    { label: 'Handshake', value: 'handshake' },
+                  ],
+                  required: true,
+                  admin: { width: '40%' },
+                },
+                {
+                  name: 'iconBgColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '30%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+                {
+                  name: 'iconColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '30%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
               ],
-              required: true,
             },
+            // ── Title row ──
             {
-              name: 'title',
-              type: 'text',
-              label: 'Title',
-              localized: true,
-              required: true,
+              type: 'row',
+              fields: [
+                {
+                  name: 'title',
+                  type: 'text',
+                  label: 'Title',
+                  localized: true,
+                  required: true,
+                  admin: { width: '70%' },
+                },
+                {
+                  name: 'titleColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '30%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+              ],
             },
+            // ── Description row ──
             {
-              name: 'description',
-              type: 'textarea',
-              label: 'Description',
-              localized: true,
-              required: true,
-            },
-            // Per‑item colour overrides
-            {
-              name: 'iconBgColor',
-              type: 'text',
-              label: 'Icon Background Colour',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'iconColor',
-              type: 'text',
-              label: 'Icon Colour',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'titleColor',
-              type: 'text',
-              label: 'Title Colour',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'descriptionColor',
-              type: 'text',
-              label: 'Description Colour',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+              type: 'row',
+              fields: [
+                {
+                  name: 'description',
+                  type: 'textarea',
+                  label: 'Description',
+                  localized: true,
+                  required: true,
+                  admin: { width: '70%' },
+                },
+                {
+                  name: 'descriptionColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '30%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+              ],
             },
           ],
         },
@@ -326,17 +449,29 @@ export const ServiceShowcaseBlock: Block = {
           label: 'Open in new tab',
           defaultValue: false,
         },
+        // Button colors row
         {
-          name: 'ctaBgColor',
-          type: 'text',
-          label: 'CTA Button Background',
-          admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-        },
-        {
-          name: 'ctaTextColor',
-          type: 'text',
-          label: 'CTA Button Text',
-          admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+          type: 'row',
+          fields: [
+            {
+              name: 'ctaBgColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '50%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+            {
+              name: 'ctaTextColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '50%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
         },
       ],
     },

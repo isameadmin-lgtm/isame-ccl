@@ -62,81 +62,126 @@ export const FeatureSectionBlock: Block = {
       minRows: 1,
       maxRows: 12,
       fields: [
-        // Icon settings
+        // ── Icon row: icon dropdown + two swatches ──
         {
-          name: 'icon',
-          type: 'select',
-          label: 'Icon',
-          options: [
-            { label: 'Heart', value: 'heart' },
-            { label: 'File Text', value: 'fileText' },
-            { label: 'Users', value: 'users' },
-            { label: 'Star', value: 'star' },
-            { label: 'Shield', value: 'shield' },
-            { label: 'Award', value: 'award' },
-            { label: 'Badge Check', value: 'badgeCheck' },
-            { label: 'Thumbs Up', value: 'thumbsUp' },
-            { label: 'Globe', value: 'globe' },
-            { label: 'Briefcase', value: 'briefcase' },
-            { label: 'Handshake', value: 'handshake' },
-          ],
-          required: true,
-        },
-        // Content (localized)
-        {
-          name: 'title',
-          type: 'text',
-          label: 'Feature Title',
-          localized: true,
-          required: true,
-        },
-        {
-          name: 'description',
-          type: 'textarea',
-          label: 'Description',
-          localized: true,
-          required: true,
-        },
-        // Per‑card colours (override theme)
-        {
-          type: 'collapsible',
-          label: '🎨 Card Colours (optional)',
+          type: 'row',
           fields: [
             {
-              name: 'titleColor',
-              type: 'text',
-              label: 'Title Colour',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'descriptionColor',
-              type: 'text',
-              label: 'Description Colour',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'cardBgColor',
-              type: 'text',
-              label: 'Card Background',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-            },
-            {
-              name: 'cardBorderColor',
-              type: 'text',
-              label: 'Card Border Colour',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+              name: 'icon',
+              type: 'select',
+              label: 'Icon',
+              options: [
+                { label: 'Heart', value: 'heart' },
+                { label: 'File Text', value: 'fileText' },
+                { label: 'Users', value: 'users' },
+                { label: 'Star', value: 'star' },
+                { label: 'Shield', value: 'shield' },
+                { label: 'Award', value: 'award' },
+                { label: 'Badge Check', value: 'badgeCheck' },
+                { label: 'Thumbs Up', value: 'thumbsUp' },
+                { label: 'Globe', value: 'globe' },
+                { label: 'Briefcase', value: 'briefcase' },
+                { label: 'Handshake', value: 'handshake' },
+              ],
+              required: true,
+              admin: { width: '40%' },
             },
             {
               name: 'iconBgColor',
               type: 'text',
-              label: 'Icon Circle Background',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+              label: false, // hidden label – the swatch is the UI
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
             },
             {
               name: 'iconColor',
               type: 'text',
-              label: 'Icon Colour (inside)',
-              admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
+        },
+
+        // ── Title row: title input + titleColor swatch ──
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              label: 'Feature Title',
+              localized: true,
+              required: true,
+              admin: { width: '70%' },
+            },
+            {
+              name: 'titleColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
+        },
+
+        // ── Description row: description textarea + descriptionColor swatch ──
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'description',
+              type: 'textarea',
+              label: 'Description',
+              localized: true,
+              required: true,
+              admin: { width: '70%' },
+            },
+            {
+              name: 'descriptionColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
+        },
+
+        // ── Optional card styling (still collapsible, but now only two fields) ──
+        {
+          type: 'collapsible',
+          label: '🎨 Card Styling (optional)',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'cardBgColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+                {
+                  name: 'cardBorderColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+              ],
             },
           ],
         },

@@ -55,6 +55,7 @@ export const SlickerSlide: Block = {
         },
       ],
     },
+    // ---------- SLIDER SETTINGS ----------
     {
       name: 'showArrows',
       type: 'checkbox',
@@ -100,26 +101,35 @@ export const SlickerSlide: Block = {
       label: 'Gap Between Slides (px)',
       defaultValue: 20,
     },
+    // ---------- BACKGROUND COLOUR ROW ----------
     {
-      name: 'backgroundColor',
-      type: 'text',
-      label: 'Background Color (solid)',
-      defaultValue: '#040d10',
-      admin: {
-        components: { Field: '@/components/ColorPicker' } as any,
-        description: 'Used only if no gradient is provided.',
-      },
-    },
-    {
-      name: 'backgroundOpacity',
-      type: 'number',
-      label: 'Background Opacity (0‑1)',
-      defaultValue: 1,
-      min: 0,
-      max: 1,
-      admin: {
-        description: 'Applies to the solid background colour.',
-      },
+      type: 'row',
+      fields: [
+        {
+          name: 'backgroundColor',
+          type: 'text',
+          label: false, // swatch only
+          defaultValue: '#040d10',
+          admin: {
+            width: '60%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+            description: 'Solid background colour (if no gradient).',
+          },
+        },
+        {
+          name: 'backgroundOpacity',
+          type: 'number',
+          label: 'Opacity',
+          defaultValue: 1,
+          min: 0,
+          max: 1,
+          admin: {
+            width: '40%',
+            step: 0.1,
+            description: '0 = fully transparent, 1 = fully opaque.',
+          },
+        },
+      ],
     },
     {
       name: 'backgroundGradient',
@@ -129,6 +139,7 @@ export const SlickerSlide: Block = {
         description: 'Example: linear-gradient(135deg, #ffd28d, #040d10). Overrides solid colour.',
       },
     },
+    // ---------- LAYOUT ----------
     {
       name: 'verticalPadding',
       type: 'select',

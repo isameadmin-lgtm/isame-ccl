@@ -1,5 +1,5 @@
 import type { GlobalConfig } from 'payload'
-import { link } from '../fields/link' // ✅ relative path
+import { link } from '../fields/link'
 
 export const Settings: GlobalConfig = {
   slug: 'settings',
@@ -15,7 +15,7 @@ export const Settings: GlobalConfig = {
       defaultValue: 'isame',
       options: [
         { label: 'Isame Collection', value: 'isame' },
-        { label: 'Isame Light', value: 'light' }, // ← add this
+        { label: 'Isame Light', value: 'light' },
         { label: 'Luxury Tropical', value: 'luxury' },
         { label: 'Elegant Resort', value: 'elegant' },
         { label: 'Modern Minimal', value: 'minimal' },
@@ -143,7 +143,7 @@ export const Settings: GlobalConfig = {
     },
 
     // ==========================================
-    // GLOBAL SEO
+    // 2. GLOBAL SEO
     // ==========================================
     {
       type: 'collapsible',
@@ -179,11 +179,7 @@ export const Settings: GlobalConfig = {
     },
 
     // ==========================================
-    // 2. HEADER & NAVIGATION
-    // ==========================================
-
-    // ==========================================
-    // 3. GLOBAL COLOURS – ThemeColorPicker on every field
+    // 3. GLOBAL COLOURS – compact swatches only
     // ==========================================
     {
       type: 'collapsible',
@@ -194,107 +190,112 @@ export const Settings: GlobalConfig = {
           name: 'colors',
           label: false,
           fields: [
+            // Primary & Secondary
             {
               type: 'row',
               fields: [
                 {
                   name: 'primaryColor',
                   type: 'text',
-                  label: 'Primary Color',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Primary brand colour',
                   },
                 },
                 {
                   name: 'secondaryColor',
                   type: 'text',
-                  label: 'Secondary Color',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Secondary accent colour',
                   },
                 },
               ],
             },
+            // Text Color (full width swatch)
             {
               type: 'row',
               fields: [
                 {
                   name: 'textColor',
                   type: 'text',
-                  label: 'Text Color',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '100%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Main text colour',
                   },
                 },
               ],
             },
+            // Link & Body BG
             {
               type: 'row',
               fields: [
                 {
                   name: 'linkColor',
                   type: 'text',
-                  label: 'Link Color',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Hyperlink colour',
                   },
                 },
                 {
                   name: 'bodyBgColor',
                   type: 'text',
-                  label: 'Site Background Color',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Site background colour',
                   },
                 },
               ],
             },
+            // Surface & Border
             {
               type: 'row',
               fields: [
                 {
                   name: 'surfaceColor',
                   type: 'text',
-                  label: 'Surface Color',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Card / container background',
                   },
                 },
                 {
                   name: 'borderColor',
                   type: 'text',
-                  label: 'Border Color',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Border colour',
                   },
                 },
               ],
             },
+            // Muted text (full width swatch)
             {
               type: 'row',
               fields: [
                 {
                   name: 'mutedColor',
                   type: 'text',
-                  label: 'Muted Text Color',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '100%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Muted / secondary text colour',
                   },
                 },
               ],
@@ -305,7 +306,7 @@ export const Settings: GlobalConfig = {
     },
 
     // ==========================================
-    // 🌍 GLOBAL PAGE BACKGROUND DEFAULTS
+    // 4. GLOBAL PAGE BACKGROUND DEFAULTS
     // ==========================================
     {
       type: 'collapsible',
@@ -323,11 +324,9 @@ export const Settings: GlobalConfig = {
         {
           name: 'defaultOverlayColor',
           type: 'text',
-          label: 'Default Overlay Color',
+          label: false, // swatch only
           admin: {
-            components: {
-              Field: '@/components/ThemeColorPicker#default',
-            },
+            components: { Field: '@/components/ThemeColorPicker#default' },
             description: 'Overlay colour for the default background.',
           },
         },
@@ -346,10 +345,7 @@ export const Settings: GlobalConfig = {
           label: 'Default Content Width',
           defaultValue: 'contained',
           options: [
-            {
-              label: 'Contained (max-width, centered)',
-              value: 'contained',
-            },
+            { label: 'Contained (max-width, centered)', value: 'contained' },
             { label: 'Full Width (edge to edge)', value: 'full' },
           ],
           admin: {
@@ -360,7 +356,7 @@ export const Settings: GlobalConfig = {
     },
 
     // ==========================================
-    // 4. GLOBAL TYPOGRAPHY – ThemeFontPicker on every font field
+    // 5. GLOBAL TYPOGRAPHY – (font pickers unchanged)
     // ==========================================
     {
       type: 'collapsible',
@@ -379,9 +375,7 @@ export const Settings: GlobalConfig = {
                   type: 'text',
                   label: 'Heading Font',
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeFontPicker#default',
-                    },
+                    components: { Field: '@/components/ThemeFontPicker#default' },
                   },
                 },
                 {
@@ -389,9 +383,7 @@ export const Settings: GlobalConfig = {
                   type: 'text',
                   label: 'Body Font',
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeFontPicker#default',
-                    },
+                    components: { Field: '@/components/ThemeFontPicker#default' },
                   },
                 },
               ],
@@ -418,11 +410,7 @@ export const Settings: GlobalConfig = {
                 {
                   type: 'row',
                   fields: [
-                    {
-                      name: 'h3FontSize',
-                      type: 'text',
-                      defaultValue: '1.75rem',
-                    },
+                    { name: 'h3FontSize', type: 'text', defaultValue: '1.75rem' },
                     { name: 'h3FontWeight', type: 'text', defaultValue: '600' },
                   ],
                 },
@@ -441,12 +429,13 @@ export const Settings: GlobalConfig = {
     },
 
     // ==========================================
-    // 5. COMPONENT STYLINGS – hero fonts & buttons
+    // 6. COMPONENT STYLINGS – compact colour swatches
     // ==========================================
     {
       type: 'collapsible',
       label: '🧱 Component Stylings',
       fields: [
+        // Hero (no color changes)
         {
           type: 'group',
           name: 'hero',
@@ -460,9 +449,7 @@ export const Settings: GlobalConfig = {
                   type: 'text',
                   label: 'Headline Font',
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeFontPicker#default',
-                    },
+                    components: { Field: '@/components/ThemeFontPicker#default' },
                   },
                 },
                 {
@@ -470,15 +457,14 @@ export const Settings: GlobalConfig = {
                   type: 'text',
                   label: 'Subtitle Font',
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeFontPicker#default',
-                    },
+                    components: { Field: '@/components/ThemeFontPicker#default' },
                   },
                 },
               ],
             },
           ],
         },
+        // Buttons – all four colour swatches in two rows
         {
           type: 'group',
           name: 'buttons',
@@ -490,21 +476,21 @@ export const Settings: GlobalConfig = {
                 {
                   name: 'buttonBgColor',
                   type: 'text',
-                  label: 'Button Background',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Button background',
                   },
                 },
                 {
                   name: 'buttonTextColor',
                   type: 'text',
-                  label: 'Button Text Color',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Button text colour',
                   },
                 },
               ],
@@ -515,21 +501,21 @@ export const Settings: GlobalConfig = {
                 {
                   name: 'buttonHoverBgColor',
                   type: 'text',
-                  label: 'Button Hover Background',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Button hover background',
                   },
                 },
                 {
                   name: 'buttonHoverTextColor',
                   type: 'text',
-                  label: 'Button Hover Text Color',
+                  label: false,
                   admin: {
-                    components: {
-                      Field: '@/components/ThemeColorPicker#default',
-                    },
+                    width: '50%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                    description: 'Button hover text colour',
                   },
                 },
               ],
@@ -546,7 +532,7 @@ export const Settings: GlobalConfig = {
     },
 
     // ==========================================
-    // 6. TRACKING & ANALYTICS (completely unchanged)
+    // 7. TRACKING & ANALYTICS (unchanged)
     // ==========================================
     {
       type: 'collapsible',
@@ -570,10 +556,7 @@ export const Settings: GlobalConfig = {
               name: 'googleTagManagerId',
               type: 'text',
               label: 'Google Tag Manager ID',
-              admin: {
-                placeholder: 'GTM-XXXXXX',
-                description: 'Container ID (starts with GTM-)',
-              },
+              admin: { placeholder: 'GTM-XXXXXX', description: 'Container ID (starts with GTM-)' },
             },
             {
               name: 'metaPixelId',

@@ -7,27 +7,38 @@ export const TrustBadgesBlock: Block = {
     plural: 'Trust Badges',
   },
   fields: [
-    // Section background
+    // ============================================================
+    // 🎨 SECTION‑WIDE COLOUR ROW (at the very top)
+    // ============================================================
     {
-      name: 'backgroundColor',
-      type: 'text',
-      label: 'Background Color',
-      admin: {
-        components: { Field: '@/components/ThemeColorPicker#default' },
-        description: 'Background colour for the entire trust badges section.',
-      },
+      type: 'row',
+      fields: [
+        {
+          name: 'backgroundColor',
+          type: 'text',
+          label: false, // swatch only
+          admin: {
+            width: '50%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+            description: 'Background colour for the entire section.',
+          },
+        },
+        {
+          name: 'textColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '50%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+            description: 'Default text colour for all badges. Overridable per badge.',
+          },
+        },
+      ],
     },
-    // Section‑wide text colour (applies to all badges unless overridden)
-    {
-      name: 'textColor',
-      type: 'text',
-      label: 'Badge Text Color',
-      admin: {
-        components: { Field: '@/components/ThemeColorPicker#default' },
-        description: 'Leave empty to use the theme text colour.',
-      },
-    },
-    // Badges array
+
+    // ============================================================
+    // 🏷️ BADGES ARRAY
+    // ============================================================
     {
       name: 'badges',
       type: 'array',
@@ -35,53 +46,70 @@ export const TrustBadgesBlock: Block = {
       minRows: 1,
       maxRows: 6,
       fields: [
+        // ── Icon row: icon selector + icon colour swatch ──
         {
-          name: 'icon',
-          type: 'select',
-          label: 'Icon',
-          options: [
-            { label: 'Users', value: 'users' },
-            { label: 'Shield', value: 'shield' },
-            { label: 'Globe', value: 'globe' },
-            { label: 'Star', value: 'star' },
-            { label: 'Heart', value: 'heart' },
-            { label: 'Award', value: 'award' },
-            { label: 'Badge Check', value: 'badgeCheck' },
-            { label: 'Thumbs Up', value: 'thumbsUp' },
-            { label: 'Briefcase', value: 'briefcase' },
-            { label: 'Handshake', value: 'handshake' },
+          type: 'row',
+          fields: [
+            {
+              name: 'icon',
+              type: 'select',
+              label: 'Icon',
+              options: [
+                { label: 'Users', value: 'users' },
+                { label: 'Shield', value: 'shield' },
+                { label: 'Globe', value: 'globe' },
+                { label: 'Star', value: 'star' },
+                { label: 'Heart', value: 'heart' },
+                { label: 'Award', value: 'award' },
+                { label: 'Badge Check', value: 'badgeCheck' },
+                { label: 'Thumbs Up', value: 'thumbsUp' },
+                { label: 'Briefcase', value: 'briefcase' },
+                { label: 'Handshake', value: 'handshake' },
+              ],
+              required: true,
+              admin: { width: '60%' },
+            },
+            {
+              name: 'iconColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '40%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
           ],
-          required: true,
         },
+
+        // ── Text row: badge text + text colour override ──
         {
-          name: 'text',
-          type: 'text',
-          label: 'Badge Text',
-          localized: true,
-          required: true,
-        },
-        {
-          name: 'iconColor',
-          type: 'text',
-          label: 'Icon Color',
-          admin: {
-            components: { Field: '@/components/ThemeColorPicker#default' },
-            description: 'Leave empty to use the theme primary colour.',
-          },
-        },
-        // Per‑badge text colour override
-        {
-          name: 'textColor',
-          type: 'text',
-          label: 'Badge Text Color',
-          admin: {
-            components: { Field: '@/components/ThemeColorPicker#default' },
-            description: 'Optional. Overrides the section‑wide text colour for this badge.',
-          },
+          type: 'row',
+          fields: [
+            {
+              name: 'text',
+              type: 'text',
+              label: 'Badge Text',
+              localized: true,
+              required: true,
+              admin: { width: '70%' },
+            },
+            {
+              name: 'textColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
         },
       ],
     },
-    // Columns
+
+    // ============================================================
+    // 📐 COLUMNS
+    // ============================================================
     {
       name: 'columns',
       type: 'select',

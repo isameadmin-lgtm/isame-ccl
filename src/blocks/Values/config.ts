@@ -14,36 +14,57 @@ export const ValuesBlock: Block = {
         description: 'Leave empty for theme default.',
       },
     },
-    // Heading
+
+    // ---------- HEADING ROW ----------
     {
-      name: 'heading',
-      type: 'text',
-      label: 'Heading',
-      localized: true,
-      required: true,
-      defaultValue: 'Our Values',
+      type: 'row',
+      fields: [
+        {
+          name: 'heading',
+          type: 'text',
+          label: 'Heading',
+          localized: true,
+          required: true,
+          defaultValue: 'Our Values',
+          admin: { width: '70%' },
+        },
+        {
+          name: 'headingColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '30%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+          },
+        },
+      ],
     },
+
+    // ---------- SUBHEADING ROW ----------
     {
-      name: 'headingColor',
-      type: 'text',
-      label: 'Heading Colour',
-      admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+      type: 'row',
+      fields: [
+        {
+          name: 'subheading',
+          type: 'text',
+          label: 'Subheading',
+          localized: true,
+          defaultValue: 'The principles that guide everything we do',
+          admin: { width: '70%' },
+        },
+        {
+          name: 'subheadingColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '30%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+          },
+        },
+      ],
     },
-    // Subheading
-    {
-      name: 'subheading',
-      type: 'text',
-      label: 'Subheading',
-      localized: true,
-      defaultValue: 'The principles that guide everything we do',
-    },
-    {
-      name: 'subheadingColor',
-      type: 'text',
-      label: 'Subheading Colour',
-      admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-    },
-    // Value cards
+
+    // ---------- VALUE CARDS ----------
     {
       name: 'values',
       type: 'array',
@@ -51,70 +72,111 @@ export const ValuesBlock: Block = {
       minRows: 1,
       maxRows: 12,
       fields: [
+        // ── Icon row: icon selector + two swatches ──
         {
-          name: 'icon',
-          type: 'select',
-          label: 'Icon',
-          options: [
-            { label: 'Heart', value: 'heart' },
-            { label: 'Award', value: 'award' },
-            { label: 'Target', value: 'target' },
-            { label: 'Globe', value: 'globe' },
-            { label: 'Star', value: 'star' },
-            { label: 'Shield', value: 'shield' },
-            { label: 'Thumbs Up', value: 'thumbsUp' },
-            { label: 'Briefcase', value: 'briefcase' },
-            { label: 'Handshake', value: 'handshake' },
+          type: 'row',
+          fields: [
+            {
+              name: 'icon',
+              type: 'select',
+              label: 'Icon',
+              options: [
+                { label: 'Heart', value: 'heart' },
+                { label: 'Award', value: 'award' },
+                { label: 'Target', value: 'target' },
+                { label: 'Globe', value: 'globe' },
+                { label: 'Star', value: 'star' },
+                { label: 'Shield', value: 'shield' },
+                { label: 'Thumbs Up', value: 'thumbsUp' },
+                { label: 'Briefcase', value: 'briefcase' },
+                { label: 'Handshake', value: 'handshake' },
+              ],
+              required: true,
+              admin: { width: '40%' },
+            },
+            {
+              name: 'iconBackgroundColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+            {
+              name: 'iconColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
           ],
-          required: true,
         },
+
+        // ── Title row: title + titleColor ──
         {
-          name: 'title',
-          type: 'text',
-          label: 'Title',
-          localized: true,
-          required: true,
+          type: 'row',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              label: 'Title',
+              localized: true,
+              required: true,
+              admin: { width: '70%' },
+            },
+            {
+              name: 'titleColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
         },
+
+        // ── Description row: description + descriptionColor ──
         {
-          name: 'description',
-          type: 'textarea',
-          label: 'Description',
-          localized: true,
-          required: true,
+          type: 'row',
+          fields: [
+            {
+              name: 'description',
+              type: 'textarea',
+              label: 'Description',
+              localized: true,
+              required: true,
+              admin: { width: '70%' },
+            },
+            {
+              name: 'descriptionColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
         },
-        // Per‑card colour overrides
+
+        // ── Card background colour (standalone, no label) ──
         {
           name: 'cardBackgroundColor',
           type: 'text',
-          label: 'Card Background Colour',
-          admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-        },
-        {
-          name: 'iconBackgroundColor',
-          type: 'text',
-          label: 'Icon Circle Background',
-          admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-        },
-        {
-          name: 'iconColor',
-          type: 'text',
-          label: 'Icon Colour',
-          admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-        },
-        {
-          name: 'titleColor',
-          type: 'text',
-          label: 'Title Colour',
-          admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-        },
-        {
-          name: 'descriptionColor',
-          type: 'text',
-          label: 'Description Colour',
-          admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+          label: false,
+          admin: {
+            width: '100%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+            description: 'Card background colour',
+          },
         },
       ],
     },
+
     // Animation toggle
     {
       name: 'enableAnimation',

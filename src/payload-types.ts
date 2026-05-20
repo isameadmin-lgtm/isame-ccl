@@ -166,9 +166,6 @@ export interface Page {
      * Large cinematic hero with layered gradients and CTA controls.
      */
     largeGradientFields?: {
-      /**
-       * Choose how tall the hero should appear.
-       */
       heroHeight?: ('screen' | '80vh' | '60vh' | '40vh' | 'custom') | null;
       customHeight?: string | null;
       contentAlignment?: ('left' | 'center' | 'right') | null;
@@ -184,6 +181,9 @@ export interface Page {
       backgroundPosition?: ('center' | 'top' | 'bottom' | 'left' | 'right') | null;
       enableParallax?: boolean | null;
       overlayType?: ('gradient' | 'solid') | null;
+      /**
+       * Solid overlay colour
+       */
       solidColor?: string | null;
       gradientType?: ('linear' | 'radial') | null;
       gradientDirection?:
@@ -210,19 +210,34 @@ export interface Page {
         label?: string | null;
         url?: string | null;
         newTab?: boolean | null;
+        /**
+         * Button background
+         */
         bgColor?: string | null;
+        /**
+         * Button text
+         */
         textColor?: string | null;
       };
       secondaryCta?: {
         label?: string | null;
         url?: string | null;
         newTab?: boolean | null;
+        /**
+         * Border colour
+         */
         borderColor?: string | null;
+        /**
+         * Text colour
+         */
         textColor?: string | null;
       };
       enableAnimation?: boolean | null;
       animationStyle?: ('fade-up' | 'fade-in' | 'zoom-in' | 'slide-left' | 'slide-right') | null;
       showScrollIndicator?: boolean | null;
+      /**
+       * Scroll indicator colour
+       */
       scrollIndicatorColor?: string | null;
     };
     richText?: {
@@ -660,11 +675,11 @@ export interface Page {
         slidesPerView?: ('1' | '2' | '3' | '4') | null;
         gap?: number | null;
         /**
-         * Used only if no gradient is provided.
+         * Solid background colour (if no gradient).
          */
         backgroundColor?: string | null;
         /**
-         * Applies to the solid background colour.
+         * 0 = fully transparent, 1 = fully opaque.
          */
         backgroundOpacity?: number | null;
         /**
@@ -898,11 +913,11 @@ export interface Page {
       }
     | {
         /**
-         * Background colour for the entire trust badges section.
+         * Background colour for the entire section.
          */
         backgroundColor?: string | null;
         /**
-         * Leave empty to use the theme text colour.
+         * Default text colour for all badges. Overridable per badge.
          */
         textColor?: string | null;
         badges?:
@@ -918,14 +933,8 @@ export interface Page {
                 | 'thumbsUp'
                 | 'briefcase'
                 | 'handshake';
-              text: string;
-              /**
-               * Leave empty to use the theme primary colour.
-               */
               iconColor?: string | null;
-              /**
-               * Optional. Overrides the section‑wide text colour for this badge.
-               */
+              text: string;
               textColor?: string | null;
               id?: string | null;
             }[]
@@ -956,14 +965,14 @@ export interface Page {
                 | 'globe'
                 | 'briefcase'
                 | 'handshake';
+              iconBgColor?: string | null;
+              iconColor?: string | null;
               title: string;
-              description: string;
               titleColor?: string | null;
+              description: string;
               descriptionColor?: string | null;
               cardBgColor?: string | null;
               cardBorderColor?: string | null;
-              iconBgColor?: string | null;
-              iconColor?: string | null;
               id?: string | null;
             }[]
           | null;
@@ -1004,9 +1013,6 @@ export interface Page {
         };
         quoteText?: string | null;
         quoteBorderColor?: string | null;
-        /**
-         * Leave empty for the theme text colour.
-         */
         quoteTextColor?: string | null;
         enableAnimation?: boolean | null;
         id?: string | null;
@@ -1025,13 +1031,14 @@ export interface Page {
         testimonials?:
           | {
               quote: string;
+              quoteColor?: string | null;
               author: string;
+              authorColor?: string | null;
               business?: string | null;
-              quoteIconColor?: string | null;
+              businessColor?: string | null;
               cardBgColor?: string | null;
               cardBorderColor?: string | null;
-              authorColor?: string | null;
-              businessColor?: string | null;
+              quoteIconColor?: string | null;
               id?: string | null;
             }[]
           | null;
@@ -1078,8 +1085,12 @@ export interface Page {
                 | 'award'
                 | 'briefcase'
                 | 'handshake';
+              iconBgColor?: string | null;
+              iconColor?: string | null;
               title: string;
+              titleColor?: string | null;
               description: string;
+              descriptionColor?: string | null;
               features?:
                 | {
                     text: string;
@@ -1088,10 +1099,6 @@ export interface Page {
                 | null;
               cardBgColor?: string | null;
               cardBorderColor?: string | null;
-              iconBgColor?: string | null;
-              iconColor?: string | null;
-              titleColor?: string | null;
-              descriptionColor?: string | null;
               featureCheckColor?: string | null;
               featureTextColor?: string | null;
               id?: string | null;
@@ -1115,11 +1122,11 @@ export interface Page {
                 | 'thumbsUp'
                 | 'globe'
                 | 'handshake';
-              title: string;
-              description: string;
               iconBgColor?: string | null;
               iconColor?: string | null;
+              title: string;
               titleColor?: string | null;
+              description: string;
               descriptionColor?: string | null;
               id?: string | null;
             }[]
@@ -1137,7 +1144,7 @@ export interface Page {
       }
     | {
         /**
-         * Leave empty for the theme default.
+         * Background colour for the entire container. Leave empty for theme default.
          */
         backgroundColor?: string | null;
         verticalPadding?: ('sm' | 'md' | 'lg' | 'xl') | null;
@@ -1157,8 +1164,17 @@ export interface Page {
               backgroundColor?: string | null;
               heading: string;
               headingColor?: string | null;
+              /**
+               * Applied to all contact item labels, values, and subtitles.
+               */
               textColor?: string | null;
+              /**
+               * Icon circle background
+               */
               iconBackgroundColor?: string | null;
+              /**
+               * Icon colour
+               */
               iconColor?: string | null;
               contactItems?:
                 | {
@@ -1212,13 +1228,16 @@ export interface Page {
         values?:
           | {
               icon: 'heart' | 'award' | 'target' | 'globe' | 'star' | 'shield' | 'thumbsUp' | 'briefcase' | 'handshake';
-              title: string;
-              description: string;
-              cardBackgroundColor?: string | null;
               iconBackgroundColor?: string | null;
               iconColor?: string | null;
+              title: string;
               titleColor?: string | null;
+              description: string;
               descriptionColor?: string | null;
+              /**
+               * Card background colour
+               */
+              cardBackgroundColor?: string | null;
               id?: string | null;
             }[]
           | null;
@@ -1280,6 +1299,9 @@ export interface Page {
           };
           [k: string]: unknown;
         };
+        /**
+         * Applied to all text inside the content block.
+         */
         textColor?: string | null;
         image: string | Media;
         imageFit?: ('cover' | 'contain') | null;
@@ -1303,8 +1325,17 @@ export interface Page {
         backgroundColor?: string | null;
         heading: string;
         headingColor?: string | null;
+        /**
+         * Applied to all contact item labels, values, and subtitles.
+         */
         textColor?: string | null;
+        /**
+         * Icon circle background
+         */
         iconBackgroundColor?: string | null;
+        /**
+         * Icon colour
+         */
         iconColor?: string | null;
         contactItems?:
           | {
@@ -2606,8 +2637,8 @@ export interface PagesSelect<T extends boolean = true> {
                 | T
                 | {
                     icon?: T;
-                    text?: T;
                     iconColor?: T;
+                    text?: T;
                     textColor?: T;
                     id?: T;
                   };
@@ -2628,14 +2659,14 @@ export interface PagesSelect<T extends boolean = true> {
                 | T
                 | {
                     icon?: T;
+                    iconBgColor?: T;
+                    iconColor?: T;
                     title?: T;
-                    description?: T;
                     titleColor?: T;
+                    description?: T;
                     descriptionColor?: T;
                     cardBgColor?: T;
                     cardBorderColor?: T;
-                    iconBgColor?: T;
-                    iconColor?: T;
                     id?: T;
                   };
               enableAnimation?: T;
@@ -2673,13 +2704,14 @@ export interface PagesSelect<T extends boolean = true> {
                 | T
                 | {
                     quote?: T;
+                    quoteColor?: T;
                     author?: T;
+                    authorColor?: T;
                     business?: T;
-                    quoteIconColor?: T;
+                    businessColor?: T;
                     cardBgColor?: T;
                     cardBorderColor?: T;
-                    authorColor?: T;
-                    businessColor?: T;
+                    quoteIconColor?: T;
                     id?: T;
                   };
               columns?: T;
@@ -2708,8 +2740,12 @@ export interface PagesSelect<T extends boolean = true> {
                 | T
                 | {
                     icon?: T;
+                    iconBgColor?: T;
+                    iconColor?: T;
                     title?: T;
+                    titleColor?: T;
                     description?: T;
+                    descriptionColor?: T;
                     features?:
                       | T
                       | {
@@ -2718,10 +2754,6 @@ export interface PagesSelect<T extends boolean = true> {
                         };
                     cardBgColor?: T;
                     cardBorderColor?: T;
-                    iconBgColor?: T;
-                    iconColor?: T;
-                    titleColor?: T;
-                    descriptionColor?: T;
                     featureCheckColor?: T;
                     featureTextColor?: T;
                     id?: T;
@@ -2733,11 +2765,11 @@ export interface PagesSelect<T extends boolean = true> {
                 | T
                 | {
                     icon?: T;
-                    title?: T;
-                    description?: T;
                     iconBgColor?: T;
                     iconColor?: T;
+                    title?: T;
                     titleColor?: T;
+                    description?: T;
                     descriptionColor?: T;
                     id?: T;
                   };
@@ -2806,13 +2838,13 @@ export interface PagesSelect<T extends boolean = true> {
                 | T
                 | {
                     icon?: T;
-                    title?: T;
-                    description?: T;
-                    cardBackgroundColor?: T;
                     iconBackgroundColor?: T;
                     iconColor?: T;
+                    title?: T;
                     titleColor?: T;
+                    description?: T;
                     descriptionColor?: T;
+                    cardBackgroundColor?: T;
                     id?: T;
                   };
               enableAnimation?: T;
@@ -3524,13 +3556,37 @@ export interface Setting {
    */
   keywords?: string | null;
   colors?: {
+    /**
+     * Primary brand colour
+     */
     primaryColor?: string | null;
+    /**
+     * Secondary accent colour
+     */
     secondaryColor?: string | null;
+    /**
+     * Main text colour
+     */
     textColor?: string | null;
+    /**
+     * Hyperlink colour
+     */
     linkColor?: string | null;
+    /**
+     * Site background colour
+     */
     bodyBgColor?: string | null;
+    /**
+     * Card / container background
+     */
     surfaceColor?: string | null;
+    /**
+     * Border colour
+     */
     borderColor?: string | null;
+    /**
+     * Muted / secondary text colour
+     */
     mutedColor?: string | null;
   };
   /**
@@ -3566,9 +3622,21 @@ export interface Setting {
     subheadingFontFamily?: string | null;
   };
   buttons?: {
+    /**
+     * Button background
+     */
     buttonBgColor?: string | null;
+    /**
+     * Button text colour
+     */
     buttonTextColor?: string | null;
+    /**
+     * Button hover background
+     */
     buttonHoverBgColor?: string | null;
+    /**
+     * Button hover text colour
+     */
     buttonHoverTextColor?: string | null;
     buttonBorderRadius?: string | null;
   };

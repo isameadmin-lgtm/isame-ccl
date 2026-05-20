@@ -7,7 +7,7 @@ export const ContactInfoBlock: Block = {
     plural: 'Contact Info',
   },
   fields: [
-    // ---------- BACKGROUND ----------
+    // ---------- BACKGROUND (standalone, no content to pair) ----------
     {
       name: 'backgroundColor',
       type: 'text',
@@ -17,41 +17,70 @@ export const ContactInfoBlock: Block = {
         description: 'Leave empty for the theme default.',
       },
     },
-    // ---------- HEADING ----------
+
+    // ---------- HEADING ROW ----------
     {
-      name: 'heading',
-      type: 'text',
-      label: 'Heading',
-      localized: true,
-      required: true,
-      defaultValue: 'Contact Information',
+      type: 'row',
+      fields: [
+        {
+          name: 'heading',
+          type: 'text',
+          label: 'Heading',
+          localized: true,
+          required: true,
+          defaultValue: 'Contact Information',
+          admin: { width: '70%' },
+        },
+        {
+          name: 'headingColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '30%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+          },
+        },
+      ],
     },
-    {
-      name: 'headingColor',
-      type: 'text',
-      label: 'Heading Colour',
-      admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-    },
-    // ---------- TEXT COLOUR (for the details) ----------
+
+    // ---------- GLOBAL TEXT COLOUR (for contact details) ----------
     {
       name: 'textColor',
       type: 'text',
-      label: 'Text Colour',
-      admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+      label: 'Text Colour (for details)',
+      admin: {
+        components: { Field: '@/components/ThemeColorPicker#default' },
+        description: 'Applied to all contact item labels, values, and subtitles.',
+      },
     },
-    // ---------- ICON COLOURS ----------
+
+    // ---------- GLOBAL ICON COLOURS (grouped) ----------
     {
-      name: 'iconBackgroundColor',
-      type: 'text',
-      label: 'Icon Circle Background Colour',
-      admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
+      type: 'row',
+      fields: [
+        {
+          name: 'iconBackgroundColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '50%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+            description: 'Icon circle background',
+          },
+        },
+        {
+          name: 'iconColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '50%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+            description: 'Icon colour',
+          },
+        },
+      ],
     },
-    {
-      name: 'iconColor',
-      type: 'text',
-      label: 'Icon Colour',
-      admin: { components: { Field: '@/components/ThemeColorPicker#default' } },
-    },
+
     // ---------- CONTACT ITEMS ----------
     {
       name: 'contactItems',
@@ -104,6 +133,7 @@ export const ContactInfoBlock: Block = {
         },
       ],
     },
+
     // ---------- MAP ----------
     {
       name: 'enableMap',
@@ -129,6 +159,7 @@ export const ContactInfoBlock: Block = {
         condition: (_, siblingData) => siblingData?.enableMap,
       },
     },
+
     // ---------- ANIMATION ----------
     {
       name: 'enableAnimation',

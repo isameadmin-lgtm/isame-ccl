@@ -1,10 +1,9 @@
 'use client'
 
-import React, { useEffect, useMemo, useState, useCallback } from 'react'
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { HexColorPicker } from 'react-colorful'
-import { useField, useFormFields } from '@payloadcms/ui'
+import { useField, usePayloadAPI } from '@payloadcms/ui'
 import { Pipette, Link2, Check } from 'lucide-react'
-// ✅ relative import – safe for import map
 import { THEME_PRESETS } from '../../theme/themePresets'
 
 const isValidHex = (hex: string) => /^#([0-9A-F]{3}){1,2}$/i.test(hex)
@@ -58,12 +57,19 @@ type Props = {
     name: string
     label?: string
   }
+  size?: 'sm' | 'md'
 }
 
-export default function ThemeColorPicker({ path, field }: Props) {
+export default function ThemeColorPicker({ path, field, size = 'sm' }: Props) {
   const { value, setValue } = useField<string>({ path })
 
-  const themePreset = useFormFields(([fields]) => fields?.themePreset?.value) || 'luxury'
+  // Fetch the global Settings to get the real themePreset
+  const [{ data: settingsData }] = usePayloadAPI(
+    '/api/globals/settings', // adjust if your global slug differs
+    { initialParams: { depth: 0 } },
+  )
+
+  const themePreset = settingsData?.themePreset || 'luxury'
 
   const preset = THEME_PRESETS[themePreset as keyof typeof THEME_PRESETS]
   const presetKey = fieldToPresetKey[field.name]
@@ -71,6 +77,7 @@ export default function ThemeColorPicker({ path, field }: Props) {
 
   const [inputValue, setInputValue] = useState(value || presetColor)
   const [open, setOpen] = useState(false)
+  const popupRef = useRef<HTMLDivElement>(null)
 
   const usingTheme = !value
 
@@ -83,6 +90,18 @@ export default function ThemeColorPicker({ path, field }: Props) {
   const displayColor = useMemo(() => {
     return isValidHex(inputValue) ? inputValue : presetColor
   }, [inputValue, presetColor])
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
+        setOpen(false)
+      }
+    }
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside)
+      return () => document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [open])
 
   const handleColorChange = useCallback(
     (color: string) => {
@@ -107,6 +126,7 @@ export default function ThemeColorPicker({ path, field }: Props) {
     (color: string) => {
       setInputValue(color)
       setValue(color)
+      setOpen(false)
     },
     [setValue],
   )
@@ -114,74 +134,82 @@ export default function ThemeColorPicker({ path, field }: Props) {
   const resetToTheme = useCallback(() => {
     setValue(undefined)
     setInputValue(presetColor)
+    setOpen(false)
   }, [setValue, presetColor])
 
   const palette = useMemo(() => {
-    if (preset?.colors) {
-      return Object.entries(preset.colors).map(([key, color]) => ({
-        name: key,
-        color,
-      }))
-    }
-    return []
+    return preset?.colors
+      ? Object.entries(preset.colors).map(([key, color]) => ({ name: key, color }))
+      : []
   }, [preset])
 
+  // Sizes based on prop
+  const triggerSize = size === 'sm' ? 'h-6 w-6' : 'h-8 w-8'
+  const iconSize = size === 'sm' ? 'h-3 w-3' : 'h-4 w-4'
+  const popupLeft = size === 'sm' ? 'left-8' : 'left-10'
+
   return (
-    <div className="mb-6 w-full">
-      <div className="flex items-center justify-between mb-2">
-        <label className="text-sm font-medium text-white">{field.label}</label>
-        <button
-          type="button"
-          onClick={resetToTheme}
-          className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-xs text-gray-300 transition-all hover:border-white/20 hover:bg-white/5"
+    <div className="relative inline-flex items-center" ref={popupRef}>
+      {/* TRIGGER BUTTON */}
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className={`${triggerSize} relative rounded-lg border border-white/10 shadow-md transition-transform hover:scale-105 focus:outline-none`}
+        style={{ backgroundColor: displayColor }}
+        title={field.label ?? 'Pick a color'}
+      >
+        <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-white/10 to-black/10" />
+        <Pipette className={`absolute inset-0 m-auto ${iconSize} text-white drop-shadow`} />
+      </button>
+
+      {/* POPUP */}
+      {open && (
+        <div
+          className={`absolute ${popupLeft} top-0 z-50 mt-1 w-80 rounded-2xl border border-white/10 bg-[#0F172A] p-4 shadow-2xl backdrop-blur`}
         >
-          <Link2 className="h-3 w-3" />
-          {usingTheme ? 'Using Theme' : 'Reset to Theme'}
-        </button>
-      </div>
+          {/* Color picker (large) */}
+          <HexColorPicker
+            color={displayColor}
+            onChange={handleColorChange}
+            className="!w-full !h-48 mb-3"
+          />
 
-      <div className="space-y-4">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={() => setOpen(!open)}
-            className="group relative h-10 w-10 overflow-hidden rounded-xl border border-white/10 shadow-lg transition-all hover:scale-105 hover:border-white/20"
-            style={{ backgroundColor: displayColor }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-black/10" />
-            <Pipette className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 text-white drop-shadow" />
-          </button>
-
-          <div className="relative flex-1">
-            <input
-              type="text"
-              value={inputValue}
-              onChange={handleInputChange}
-              placeholder={presetColor}
-              spellCheck={false}
-              className="h-10 w-full rounded-xl border border-white/10 bg-[#111827] pl-3 pr-4 font-mono text-sm text-white outline-none transition-all focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
-            />
+          {/* Hex input + reset */}
+          <div className="flex items-center gap-2 mb-3">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={handleInputChange}
+                placeholder={presetColor}
+                spellCheck={false}
+                className="h-9 w-full rounded-lg border border-white/10 bg-[#111827] pl-3 pr-10 font-mono text-sm text-white outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/20"
+              />
+              <div
+                className="absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full border border-white/20"
+                style={{ backgroundColor: displayColor }}
+              />
+            </div>
+            <button
+              type="button"
+              onClick={resetToTheme}
+              className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs transition ${
+                usingTheme
+                  ? 'bg-white/10 text-white'
+                  : 'text-gray-400 hover:text-white hover:bg-white/5'
+              }`}
+              title="Reset to theme color"
+            >
+              <Link2 className="h-3 w-3" />
+              {usingTheme ? 'Theme' : 'Reset'}
+            </button>
           </div>
 
-          <div
-            className="min-w-[80px] rounded-xl border border-white/10 bg-[#111827] px-3 py-2 text-center font-mono text-xs"
-            style={{ backgroundColor: displayColor, color: '#fff' }}
-          >
-            {displayColor}
-          </div>
-        </div>
-
-        {open && (
-          <div className="rounded-2xl border border-white/10 bg-[#0F172A] p-4 shadow-2xl backdrop-blur">
-            <HexColorPicker color={displayColor} onChange={handleColorChange} className="!w-full" />
-          </div>
-        )}
-
-        <div>
-          <p className="mb-2 text-xs font-medium text-gray-400">
-            Theme Palette — {preset?.label || themePreset}
+          {/* Theme swatches */}
+          <p className="mb-1.5 text-[10px] font-medium text-gray-500">
+            {preset?.label || themePreset} colors
           </p>
-          <div className="grid grid-cols-5 sm:grid-cols-6 gap-2">
+          <div className="grid grid-cols-8 gap-1.5">
             {palette.map(({ name, color }) => {
               const isActive = displayColor === color
               return (
@@ -189,30 +217,25 @@ export default function ThemeColorPicker({ path, field }: Props) {
                   key={name}
                   type="button"
                   onClick={() => handleSwatchClick(color)}
-                  className="group relative flex flex-col items-center gap-1"
                   title={name}
+                  className="group relative flex justify-center"
                 >
                   <div
-                    className={`
-                      h-10 w-10 rounded-xl border-2 transition-all
-                      hover:scale-110 hover:shadow-lg
-                      ${isActive ? 'border-white scale-110 shadow-lg' : 'border-white/10'}
-                    `}
+                    className={`h-7 w-7 rounded-md border-2 transition-all hover:scale-110 hover:shadow-md ${
+                      isActive ? 'border-white scale-110' : 'border-white/10'
+                    }`}
                     style={{ backgroundColor: color }}
                   >
                     {isActive && (
-                      <Check className="absolute left-1/2 top-1/2 h-4 w-4 -translate-x-1/2 -translate-y-1/2 text-white drop-shadow" />
+                      <Check className="absolute inset-0 m-auto h-3 w-3 text-white drop-shadow" />
                     )}
                   </div>
-                  <span className="text-[10px] text-gray-400 truncate w-full text-center">
-                    {name}
-                  </span>
                 </button>
               )
             })}
           </div>
         </div>
-      </div>
+      )}
     </div>
   )
 }

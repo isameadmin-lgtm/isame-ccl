@@ -7,7 +7,7 @@ export const TestimonialsBlock: Block = {
     plural: 'Testimonials',
   },
   fields: [
-    // ---------- SECTION BACKGROUND ----------
+    // ---------- SECTION BACKGROUND (standalone, no content to pair) ----------
     {
       name: 'backgroundColor',
       type: 'text',
@@ -17,37 +17,55 @@ export const TestimonialsBlock: Block = {
         description: 'Leave empty for the theme default.',
       },
     },
-    // ---------- HEADING & SUBHEADING ----------
+
+    // ---------- HEADING ROW ----------
     {
-      name: 'heading',
-      type: 'text',
-      label: 'Section Heading',
-      localized: true,
-      defaultValue: 'Support from the Business Community',
+      type: 'row',
+      fields: [
+        {
+          name: 'heading',
+          type: 'text',
+          label: 'Section Heading',
+          localized: true,
+          defaultValue: 'Support from the Business Community',
+          admin: { width: '70%' },
+        },
+        {
+          name: 'headingColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '30%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+          },
+        },
+      ],
     },
+
+    // ---------- SUBHEADING ROW ----------
     {
-      name: 'headingColor',
-      type: 'text',
-      label: 'Heading Color',
-      admin: {
-        components: { Field: '@/components/ThemeColorPicker#default' },
-      },
+      type: 'row',
+      fields: [
+        {
+          name: 'subheading',
+          type: 'text',
+          label: 'Subheading',
+          localized: true,
+          defaultValue: 'Trusted by Belizean businesses across all sectors',
+          admin: { width: '70%' },
+        },
+        {
+          name: 'subheadingColor',
+          type: 'text',
+          label: false,
+          admin: {
+            width: '30%',
+            components: { Field: '@/components/ThemeColorPicker#default' },
+          },
+        },
+      ],
     },
-    {
-      name: 'subheading',
-      type: 'text',
-      label: 'Subheading',
-      localized: true,
-      defaultValue: 'Trusted by Belizean businesses across all sectors',
-    },
-    {
-      name: 'subheadingColor',
-      type: 'text',
-      label: 'Subheading Color',
-      admin: {
-        components: { Field: '@/components/ThemeColorPicker#default' },
-      },
-    },
+
     // ---------- TESTIMONIALS ----------
     {
       name: 'testimonials',
@@ -56,75 +74,119 @@ export const TestimonialsBlock: Block = {
       minRows: 1,
       maxRows: 12,
       fields: [
+        // ── Quote row: textarea + quote color (NEW) ──
         {
-          name: 'quote',
-          type: 'textarea',
-          label: 'Quote',
-          localized: true,
-          required: true,
-        },
-        {
-          name: 'author',
-          type: 'text',
-          label: 'Author Name',
-          localized: true,
-          required: true,
-        },
-        {
-          name: 'business',
-          type: 'text',
-          label: 'Business / Location',
-          localized: true,
-        },
-        // Card & text colours (optional overrides)
-        {
-          type: 'collapsible',
-          label: '🎨 Card Colours (optional)',
+          type: 'row',
           fields: [
             {
-              name: 'quoteIconColor',
-              type: 'text',
-              label: 'Quote Icon Color',
-              admin: {
-                components: { Field: '@/components/ThemeColorPicker#default' },
-              },
+              name: 'quote',
+              type: 'textarea',
+              label: 'Quote',
+              localized: true,
+              required: true,
+              admin: { width: '70%' },
             },
             {
-              name: 'cardBgColor',
+              name: 'quoteColor', // 🆕 Added this field
               type: 'text',
-              label: 'Card Background Color',
+              label: false,
               admin: {
-                components: { Field: '@/components/ThemeColorPicker#default' },
-              },
-            },
-            {
-              name: 'cardBorderColor',
-              type: 'text',
-              label: 'Card Border Color',
-              admin: {
-                components: { Field: '@/components/ThemeColorPicker#default' },
-              },
-            },
-            {
-              name: 'authorColor',
-              type: 'text',
-              label: 'Author Text Color',
-              admin: {
-                components: { Field: '@/components/ThemeColorPicker#default' },
-              },
-            },
-            {
-              name: 'businessColor',
-              type: 'text',
-              label: 'Business Text Color',
-              admin: {
+                width: '30%',
                 components: { Field: '@/components/ThemeColorPicker#default' },
               },
             },
           ],
         },
+
+        // ── Author row: text + color ──
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'author',
+              type: 'text',
+              label: 'Author Name',
+              localized: true,
+              required: true,
+              admin: { width: '70%' },
+            },
+            {
+              name: 'authorColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
+        },
+
+        // ── Business row: text + color ──
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'business',
+              type: 'text',
+              label: 'Business / Location',
+              localized: true,
+              admin: { width: '70%' },
+            },
+            {
+              name: 'businessColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '30%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
+        },
+
+        // ── Card styling (collapsible – two rows of swatches) ──
+        {
+          type: 'collapsible',
+          label: '🎨 Card Styling (optional)',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'cardBgColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '33%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+                {
+                  name: 'cardBorderColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '33%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+                {
+                  name: 'quoteIconColor',
+                  type: 'text',
+                  label: false,
+                  admin: {
+                    width: '34%',
+                    components: { Field: '@/components/ThemeColorPicker#default' },
+                  },
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
+
     // ---------- COLUMNS ----------
     {
       name: 'columns',
@@ -137,6 +199,7 @@ export const TestimonialsBlock: Block = {
         { label: '3', value: '3' },
       ],
     },
+
     // ---------- CTA ----------
     {
       type: 'collapsible',
@@ -160,24 +223,33 @@ export const TestimonialsBlock: Block = {
           label: 'Open in new tab',
           defaultValue: false,
         },
+        // CTA button colors row
         {
-          name: 'ctaBgColor',
-          type: 'text',
-          label: 'CTA Background Color',
-          admin: {
-            components: { Field: '@/components/ThemeColorPicker#default' },
-          },
-        },
-        {
-          name: 'ctaTextColor',
-          type: 'text',
-          label: 'CTA Text Color',
-          admin: {
-            components: { Field: '@/components/ThemeColorPicker#default' },
-          },
+          type: 'row',
+          fields: [
+            {
+              name: 'ctaBgColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '50%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+            {
+              name: 'ctaTextColor',
+              type: 'text',
+              label: false,
+              admin: {
+                width: '50%',
+                components: { Field: '@/components/ThemeColorPicker#default' },
+              },
+            },
+          ],
         },
       ],
     },
+
     // ---------- ANIMATION ----------
     {
       name: 'enableAnimation',
